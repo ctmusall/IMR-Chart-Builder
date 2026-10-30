@@ -23,11 +23,13 @@ from PySide6.QtWidgets import (  # noqa: E402
     QMessageBox,
     QPushButton,
     QScrollArea,
+    QSpinBox,
     QVBoxLayout,
     QWidget,
 )
 
 from . import __version__, loader  # noqa: E402
+from .plot_static import DEFAULT_RECENT_DAYS  # noqa: E402
 from .report import ChartJob, build_job  # noqa: E402
 from .stats import parse_limit  # noqa: E402
 
@@ -55,6 +57,11 @@ class MainWindow(QMainWindow):
         self.sigma_spin.setRange(0.5, 6.0)
         self.sigma_spin.setSingleStep(0.5)
         self.sigma_spin.setValue(3.0)
+        self.recent_spin = QSpinBox()
+        self.recent_spin.setRange(0, 3650)
+        self.recent_spin.setValue(DEFAULT_RECENT_DAYS)
+        self.recent_spin.setSuffix(" days")
+        self.recent_spin.setSpecialValueText("Off")
         self.generate_btn = QPushButton("Generate chart")
         self.save_png_btn = QPushButton("Save PNG…")
         self.save_html_btn = QPushButton("Save HTML…")
@@ -72,6 +79,7 @@ class MainWindow(QMainWindow):
         form.addRow("Date column:", self.date_box)
         form.addRow("LSL:", self.lsl_edit)
         form.addRow("Sigma multiplier (k):", self.sigma_spin)
+        form.addRow("Highlight recent:", self.recent_spin)
 
         buttons = QHBoxLayout()
         for b in (self.generate_btn, self.save_png_btn, self.save_html_btn, self.save_xlsx_btn):
@@ -106,7 +114,8 @@ class MainWindow(QMainWindow):
     # -- state -----------------------------------------------------------
     def _update_enabled(self):
         loaded = self.df is not None
-        for w in (self.sheet_box, self.column_box, self.date_box, self.lsl_edit, self.sigma_spin, self.generate_btn):
+        for w in (self.sheet_box, self.column_box, self.date_box, self.lsl_edit, self.sigma_spin, self.recent_spin,
+                  self.generate_btn):
             w.setEnabled(loaded)
         for w in (self.save_png_btn, self.save_html_btn, self.save_xlsx_btn):
             w.setEnabled(self.job is not None)
@@ -168,7 +177,9 @@ class MainWindow(QMainWindow):
         date_col = None if date_col in ("", NO_DATE) else date_col
         try:
             lsl = parse_limit(self.lsl_edit.text())
-            self.job = build_job(self.df, self.path, column, date_col, lsl=lsl, k=self.sigma_spin.value())
+            self.job = build_job(self.df, self.path, column, date_col, lsl=lsl, k=self.sigma_spin.value(),
+                                 recent_days=self.recent_spin.value(),
+                                 sheet=None if loader.is_csv(self.path) else self.sheet_box.currentText())
         except Exception as exc:  # noqa: BLE001
             self.job = None
             self._update_enabled()

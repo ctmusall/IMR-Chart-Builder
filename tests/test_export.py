@@ -13,7 +13,8 @@ def test_xlsx_export(tmp_path):
     path = save_xlsx(data, r, "My Col", tmp_path / "x" / "out.xlsx", source="in.xlsx", excluded=4)
 
     wb = openpyxl.load_workbook(path)
-    assert wb.sheetnames == ["Summary stats", "Data", "Out of limits"]
+    assert wb.sheetnames == ["Summary stats", "Verification", "Worked formulas", "Data", "Recompute",
+                             "Input audit", "Out of limits"]
     stats = {row[0]: row[1] for row in wb["Summary stats"].iter_rows(min_row=2, values_only=True)}
     assert stats["Column"] == "My Col"
     assert stats["Source file"] == "in.xlsx"
@@ -28,6 +29,7 @@ def test_xlsx_export(tmp_path):
     data_ws = wb["Data"]
     assert data_ws.max_row == 11
     assert [c.value for c in data_ws[1]][:4] == ["Lot", "Date", "Value", "Moving Range"]
+    assert data_ws["I1"].value == "Source row" and data_ws["I2"].value == 1
     oob = list(wb["Out of limits"].iter_rows(min_row=2, values_only=True))
     assert len(oob) == 1 and oob[0][0] == "L9"
 

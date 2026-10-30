@@ -13,6 +13,8 @@ excludes = [
     "PySide6.QtQuick", "PySide6.QtQml", "PySide6.QtMultimedia", "PySide6.QtPdf", "PySide6.QtCharts",
     "PySide6.QtDataVisualization", "PySide6.QtBluetooth", "PySide6.QtNetworkAuth", "PySide6.QtSql",
     "PySide6.QtTest", "PyQt5", "PyQt6", "IPython", "pytest",
+    # Test-only (the "formulas" Excel evaluator and what it pulls in); pandas would otherwise bundle scipy.
+    "formulas", "schedula", "scipy",
 ]
 
 

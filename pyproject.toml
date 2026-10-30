@@ -16,7 +16,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "pytest-cov>=5", "pytest-qt>=4.4", "pyinstaller>=6.10"]
+dev = ["pytest>=8", "pytest-cov>=5", "pytest-qt>=4.4", "pyinstaller>=6.10",
+       "formulas>=1.2"]  # evaluates the Verification sheet's Excel formulas in tests
 
 [project.scripts]
 imr-chart = "imr_chart.__main__:main"

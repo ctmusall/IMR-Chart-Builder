@@ -10,14 +10,18 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from .plot_static import (
+    DEFAULT_RECENT_DAYS,
     LIMIT_COLOR,
     LSL_COLOR,
     MEAN_COLOR,
     POINT_COLOR,
+    RECENT_BAND_COLOR,
+    RECENT_COLOR,
     _show_lcl,
     format_number,
     looks_like_fraction,
     lsl_label,
+    recent_mask,
 )
 from .stats import ImrResult
 
@@ -29,6 +33,7 @@ def build_html_figure(
     date_label: str = "Date Processed",
     excluded: int = 0,
     percent: bool | None = None,
+    recent_days: int = DEFAULT_RECENT_DAYS,
 ) -> go.Figure:
     if percent is None:
         percent = looks_like_fraction(result.values)
@@ -40,9 +45,13 @@ def build_html_figure(
     vfmt = ".1%" if percent else ".4~s"
     date_part = "%{x|%m/%d/%Y}" if has_dates else "Obs %{x}"
     mr = result.moving_ranges
+    recent = recent_mask(data, recent_days)
+    if recent is not None and not recent.any():
+        recent = None
+    base = np.where(recent, RECENT_COLOR, POINT_COLOR) if recent is not None else POINT_COLOR
 
     def colors(flags):
-        return np.where(flags, LIMIT_COLOR, POINT_COLOR)
+        return np.where(flags, LIMIT_COLOR, base)
 
     fig.add_trace(
         go.Scatter(
@@ -62,6 +71,14 @@ def build_html_figure(
         ),
         row=2, col=1,
     )
+
+    # Added after the traces: row="all" skips subplots that are still empty.
+    if recent is not None:
+        start, end = data["date"][recent].min(), data["date"].iloc[-1]
+        fig.add_vrect(x0=start, x1=end, fillcolor=RECENT_BAND_COLOR, opacity=1, layer="below",
+                      line_width=0, row="all", col=1)
+        fig.add_annotation(x=start, y=1, xref="x", yref="y domain", text=f"<b>Last {recent_days} days</b>",
+                           showarrow=False, xanchor="left", yanchor="top", font={"color": RECENT_COLOR, "size": 11})
 
     def hline(y, color, text, row, width=2):
         fig.add_hline(y=y, line={"color": color, "width": width}, row=row, col=1,
@@ -88,6 +105,8 @@ def build_html_figure(
         fig.update_xaxes(tickformat="%m/%d/%Y", tickangle=-90)
 
     subtitle = f"n={result.n}, limits = mean ± {result.k:g}σ (σ = MR̄/1.128)"
+    if recent is not None:
+        subtitle += f" · highlighted: last {recent_days} days (from {start:%m/%d/%Y})"
     if excluded:
         subtitle += f" · {excluded} rows excluded"
     fig.update_layout(

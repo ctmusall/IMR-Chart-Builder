@@ -1,3 +1,4 @@
+import matplotlib.colors
 import numpy as np
 import pandas as pd
 import pytest
@@ -104,3 +105,51 @@ def test_html_percent_no_dates():
     fig = plot_html.build_html_figure(make_data(vals, dates=False), r, "V")
     assert fig.layout.yaxis.tickformat == ".0%"
     assert fig.layout.xaxis2.title.text == "Observation"
+
+
+def test_recent_mask():
+    data = make_data(list(range(60)))  # daily from 2024-01-01
+    mask = plot_static.recent_mask(data, 30)
+    assert mask.sum() == 31 and mask[-31:].all()  # latest date and the 30 days before it
+    assert plot_static.recent_mask(data, 0) is None
+    assert plot_static.recent_mask(make_data([1.0, 2.0], dates=False), 30) is None
+
+
+def band_count(ax):
+    from matplotlib.patches import Polygon, Rectangle
+    return sum(isinstance(p, (Polygon, Rectangle)) and p.get_facecolor()[:3] == matplotlib.colors.to_rgb(
+        plot_static.RECENT_BAND_COLOR) for p in ax.patches)
+
+
+def test_static_recent_highlight(big):
+    data, r = big
+    fig = plot_static.build_figure(data, r, "C")
+    ax_i, ax_mr = fig.axes
+    assert band_count(ax_i) == 1 and band_count(ax_mr) == 1
+    recent_rgb = matplotlib.colors.to_rgba(plot_static.RECENT_COLOR)
+    pts = [c for c in ax_i.collections if tuple(c.get_facecolor()[0]) == recent_rgb]
+    assert len(pts) == 1 and len(pts[0].get_offsets()) == 31
+    assert any(t.get_text() == "Last 30 days" for t in ax_i.texts)
+    assert "Highlighted: last 30 days" in " ".join(t.get_text() for t in fig.texts)
+
+
+def test_static_recent_off(big):
+    data, r = big
+    for fig in (plot_static.build_figure(data, r, "C", recent_days=0),
+                plot_static.build_figure(make_data(r.values, dates=False), r, "C")):
+        assert band_count(fig.axes[0]) == 0
+        assert not any(t.get_text().startswith("Last") for t in fig.axes[0].texts)
+
+
+def test_html_recent_highlight():
+    vals = [5.0] * 40 + [50.0] + [5.0] * 19  # one flagged spike inside the last 30 days
+    r = compute_imr(vals)
+    data = make_data(vals)
+    fig = plot_html.build_html_figure(data, r, "C", percent=False)
+    colors = list(fig.data[0].marker.color)
+    assert colors[0] == plot_static.POINT_COLOR
+    assert colors[-1] == plot_static.RECENT_COLOR
+    assert colors[40] == plot_static.LIMIT_COLOR  # flagged wins over recent
+    assert any(s.type == "rect" and s.fillcolor == plot_static.RECENT_BAND_COLOR for s in fig.layout.shapes)
+    off = plot_html.build_html_figure(data, r, "C", percent=False, recent_days=0)
+    assert plot_static.RECENT_COLOR not in list(off.data[0].marker.color)

@@ -21,6 +21,17 @@ MEAN_COLOR = "#2e9e3e"
 LIMIT_COLOR = "#d62728"
 LSL_COLOR = "#3a5fcd"
 FLAG_COLOR = "#d62728"
+RECENT_COLOR = "#ff7f0e"
+RECENT_BAND_COLOR = "#fff1e0"
+DEFAULT_RECENT_DAYS = 30
+
+
+def recent_mask(data: pd.DataFrame, days: int | None) -> np.ndarray | None:
+    """Points within ``days`` of the latest date, or None when there is no window."""
+    if not days or "date" not in data or not data["date"].notna().all() or data.empty:
+        return None
+    dates = data["date"]
+    return (dates >= dates.max() - pd.Timedelta(days=days)).to_numpy()
 
 
 def looks_like_fraction(values) -> bool:
@@ -60,12 +71,16 @@ def build_figure(
     excluded: int = 0,
     percent: bool | None = None,
     figsize=(11, 8.5),
+    recent_days: int = DEFAULT_RECENT_DAYS,
 ) -> Figure:
     """Build the two-panel I-MR figure. ``data`` must have ``date`` and ``value``."""
     if percent is None:
         percent = looks_like_fraction(result.values)
     has_dates = "date" in data and data["date"].notna().all()
     x = data["date"].to_numpy() if has_dates else np.arange(1, result.n + 1)
+    recent = recent_mask(data, recent_days)
+    if recent is not None and not recent.any():
+        recent = None
 
     fig = Figure(figsize=figsize, dpi=100)
     ax_i, ax_mr = fig.subplots(2, 1, sharex=True, gridspec_kw={"height_ratios": [3, 2], "hspace": 0.06})
@@ -109,6 +124,16 @@ def build_figure(
     ax_mr.set_ylabel(f"Moving Range({column})")
     ax_mr.yaxis.set_major_formatter(fmt)
 
+    # Recent window: shaded band plus recolored points (beyond-limit rings stay on top).
+    if recent is not None:
+        start, end = x[recent].min(), x[-1]
+        for ax, y in ((ax_i, result.values), (ax_mr, mr)):
+            ax.axvspan(start, end, color=RECENT_BAND_COLOR, zorder=0, linewidth=0)
+            ax.scatter(x[recent], y[recent], s=12, color=RECENT_COLOR, zorder=3.5, linewidths=0)
+        ax_i.annotate(f"Last {recent_days} days", xy=(start, 1), xycoords=("data", "axes fraction"),
+                      xytext=(2, -2), textcoords="offset points", ha="left", va="top",
+                      color=RECENT_COLOR, fontsize=8, fontweight="bold", zorder=5)
+
     for ax in (ax_i, ax_mr):
         ax.grid(axis="y", color="#e6e6e6", linewidth=0.6)
         ax.set_axisbelow(True)
@@ -141,6 +166,8 @@ def build_figure(
             f"   |   Beyond limits: {int(flagged.sum())} individual, {int(result.mr_above_ucl.sum())} MR")
     if result.lsl is not None:
         note += f",  {int(result.below_lsl.sum())} below LSL"
+    if recent is not None:
+        note += f"   |   Highlighted: last {recent_days} days (from {pd.Timestamp(x[recent].min()):%m/%d/%Y})"
     if excluded:
         note += f"\n{excluded} rows excluded (blank or non-numeric)."
     fig.text(0.01, 0.005, note, fontsize=8, color="#444444", ha="left", va="bottom")

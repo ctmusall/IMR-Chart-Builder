@@ -25,6 +25,14 @@ def test_multiple_columns_and_formats(csv_file, tmp_path):
     assert sorted(p.name for p in (tmp_path / "out").iterdir()) == ["IMR_QC3_CD34_Unit.png", "IMR_QC3_CD34_Viability.png"]
 
 
+def test_recent_days_option(xlsx_with_header_tab, tmp_path):
+    for days in ("0", "7"):
+        assert main([str(xlsx_with_header_tab), "-c", "QC3 CD34/Unit", "--recent-days", days, "--formats", "png,html",
+                     "-o", str(tmp_path / days)]) == 0
+    assert "Last 7 days" in (tmp_path / "7" / "IMR_QC3_CD34_Unit.html").read_text(encoding="utf-8")
+    assert "Last 0 days" not in (tmp_path / "0" / "IMR_QC3_CD34_Unit.html").read_text(encoding="utf-8")
+
+
 def test_no_date(xlsx_with_header_tab, tmp_path):
     assert main([str(xlsx_with_header_tab), "-c", "QC3 CD34 Viability", "--no-date", "--formats", "xlsx",
                  "-o", str(tmp_path)]) == 0
@@ -40,6 +48,7 @@ def test_no_date(xlsx_with_header_tab, tmp_path):
         (["-c", "QC3 CD34/Unit", "-c", "QC3 CD34 Viability", "--lsl", "1", "--lsl", "2", "--lsl", "3"], 2,
          "one per --column"),
         (["--sheet", "Nope", "--list-columns"], 1, "not found"),
+        (["-c", "QC3 CD34/Unit", "--recent-days", "-1"], 2, "--recent-days"),
     ],
 )
 def test_errors(xlsx_with_header_tab, tmp_path, capsys, extra, code, msg):

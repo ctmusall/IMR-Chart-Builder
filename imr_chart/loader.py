@@ -14,6 +14,7 @@ PREFERRED_DATE_COLUMN = "Date Processed"
 PREFERRED_LABEL_COLUMNS = ("QC Lot", "Lot Number", "ISBT DIN")
 EXCEL_EPOCH = pd.Timestamp("1899-12-30")
 CSV_SUFFIXES = {".csv", ".txt", ".tsv"}
+SOURCE_ROW = "Source row"
 
 
 def is_csv(path: str | Path) -> bool:
@@ -67,15 +68,19 @@ def load_table(path: str | Path, sheet: str | None = None) -> pd.DataFrame:
 
     Header resolution: a sibling ``Column Headers (<sheet>)`` tab wins; otherwise
     the first row is used when it looks like a header; otherwise generic names.
+
+    The index holds each row's line number in the source file (the Excel row
+    number, or the CSV line number), so every charted point can be traced back.
     """
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(f"File not found: {path}")
     if is_csv(path):
         sep = "\t" if path.suffix.lower() == ".tsv" else None
-        df = pd.read_csv(path, sep=sep, engine="python")
+        df = pd.read_csv(path, sep=sep, engine="python", skip_blank_lines=False)
         df.columns = _dedupe(list(df.columns))
-        return df
+        df.index = pd.RangeIndex(2, len(df) + 2, name=SOURCE_ROW)  # line 1 is the header
+        return df.dropna(how="all")
 
     xl = pd.ExcelFile(path)
     if sheet is None:
@@ -84,6 +89,7 @@ def load_table(path: str | Path, sheet: str | None = None) -> pd.DataFrame:
         raise ValueError(f"Sheet '{sheet}' not found. Available: {', '.join(xl.sheet_names)}")
 
     raw = pd.read_excel(xl, sheet_name=sheet, header=None)
+    raw.index = pd.RangeIndex(1, len(raw) + 1, name=SOURCE_ROW)  # blank rows are kept, so this is the Excel row
     header_tab = _header_tab_for(sheet, xl.sheet_names)
     if header_tab is not None:
         names = pd.read_excel(xl, sheet_name=header_tab, header=None).iloc[0].tolist()
@@ -99,7 +105,7 @@ def load_table(path: str | Path, sheet: str | None = None) -> pd.DataFrame:
         raw = raw.iloc[1:]
     else:
         raw.columns = _dedupe([None] * raw.shape[1])
-    raw = raw.dropna(how="all").reset_index(drop=True)
+    raw = raw.dropna(how="all")
     return raw.infer_objects()
 
 
@@ -178,17 +184,20 @@ def pick_label_column(df: pd.DataFrame) -> str | None:
     return None
 
 
-def prepare_series(
+def _is_blank(series: pd.Series) -> pd.Series:
+    return series.isna() | (series.astype(str).str.strip() == "")
+
+
+def audit_rows(
     df: pd.DataFrame,
     value_col: str,
     date_col: str | None = None,
     label_col: str | None = None,
-) -> tuple[pd.DataFrame, int]:
-    """Return a clean frame with columns ``date``, ``label``, ``value``.
+) -> pd.DataFrame:
+    """One row per input row: raw and parsed values, and whether it is charted and why not.
 
-    Rows with a blank / non-numeric value (or unparseable date when a date column
-    is used) are dropped and counted as excluded. Rows are sorted by date (stable,
-    so original order breaks ties).
+    Columns: ``row`` (source line number), ``label``, ``raw_date``, ``raw_value``,
+    ``date``, ``value``, ``included`` and ``reason`` (blank when included).
     """
     if value_col not in df.columns:
         raise KeyError(f"Column '{value_col}' not found")
@@ -197,18 +206,48 @@ def prepare_series(
     if label_col is not None and label_col not in df.columns:
         raise KeyError(f"Label column '{label_col}' not found")
 
+    raw_value = df[value_col]
+    raw_date = df[date_col] if date_col else pd.Series(None, index=df.index, dtype=object)
     out = pd.DataFrame(
         {
+            "row": df.index.to_numpy(),
+            "label": (df[label_col].astype(str) if label_col
+                      else pd.Series(range(1, len(df) + 1), index=df.index).astype(str)),
+            "raw_date": raw_date,
+            "raw_value": raw_value,
             "date": to_datetime(df[date_col]) if date_col else pd.Series(pd.NaT, index=df.index),
-            "label": df[label_col].astype(str) if label_col else (df.index + 1).astype(str),
-            "value": to_numeric(df[value_col]),
+            "value": to_numeric(raw_value),
         }
     )
-    keep = out["value"].notna()
+    reason = pd.Series("", index=df.index, dtype=object)
     if date_col:
-        keep &= out["date"].notna()
-    excluded = int((~keep).sum())
-    out = out[keep]
-    if date_col:
+        reason[out["date"].isna()] = "Date not readable"
+        reason[_is_blank(raw_date)] = "Date blank"
+    reason[out["value"].isna()] = "Value not numeric"
+    reason[_is_blank(raw_value)] = "Value blank"
+    out["reason"] = reason
+    out["included"] = reason == ""
+    return out.reset_index(drop=True)
+
+
+def prepare_series(
+    df: pd.DataFrame,
+    value_col: str,
+    date_col: str | None = None,
+    label_col: str | None = None,
+) -> tuple[pd.DataFrame, int]:
+    """Return a clean frame with columns ``date``, ``label``, ``value`` and ``row``.
+
+    Rows with a blank / non-numeric value (or unparseable date when a date column
+    is used) are dropped and counted as excluded; see :func:`audit_rows` for why.
+    Rows are sorted by date (stable, so original order breaks ties).
+    """
+    return included_series(audit_rows(df, value_col, date_col, label_col), by_date=date_col is not None)
+
+
+def included_series(audit: pd.DataFrame, by_date: bool) -> tuple[pd.DataFrame, int]:
+    """Split an :func:`audit_rows` frame into the charted series and the excluded count."""
+    out = audit.loc[audit["included"], ["date", "label", "value", "row"]]
+    if by_date:
         out = out.sort_values("date", kind="stable")
-    return out.reset_index(drop=True), excluded
+    return out.reset_index(drop=True), int((~audit["included"]).sum())

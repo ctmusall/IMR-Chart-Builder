@@ -5,8 +5,9 @@ Generates **Individual & Moving Range (I-MR) control charts** from Excel or CSV 
 - black points, green center line (mean), red control limits
 - a blue **LSL** line (for example `LSL (2e7)`)
 - a moving-range chart underneath, plotted against Date Processed
+- the **most recent 30 days** (counted back from the latest date in the file) shaded and drawn in orange, so new results stand out. Control limits still use all the data.
 
-Outputs: **PNG** image, **interactive HTML** (hover a point to see its lot number, date, and value), and an **Excel stats** workbook.
+Outputs: **PNG** image, **interactive HTML** (hover a point to see its lot number, date, and value), and an **Excel stats** workbook. The workbook proves that the chart's numbers match the input (see below).
 
 ## Calculations (same as JMP's defaults)
 
@@ -17,6 +18,21 @@ Outputs: **PNG** image, **interactive HTML** (hover a point to see its lot numbe
 | Moving range center / UCL / LCL | MR̄, MR̄ + k·0.8525σ (= 3.267·MR̄ at k = 3), 0 |
 
 `k` (the sigma multiplier) defaults to 3 and can be changed. A negative LCL is not drawn when the data can't go below zero, matching the JMP view of CD34/Unit. Rows with a blank or non-numeric value are excluded, and the chart footnote shows how many.
+
+## Proof that the chart matches the input
+
+The Excel stats workbook (`.xlsx`) carries the evidence alongside the results:
+
+| Sheet | What it proves |
+|---|---|
+| **Summary stats** | Which input was charted. Includes the source file's **SHA-256 fingerprint**, path, sheet, columns, settings, program version and timestamp. Re-hash the file (`certutil -hashfile FILE SHA256` on Windows, `sha256sum FILE` on Linux) to confirm the input is the same file. |
+| **Verification** | Excel recomputes every number with its own formulas (n, mean, MR̄, σ, all limits, every flag count) and compares each with the program's value. Every check shows PASS or FAIL, and the top cell shows **ALL CHECKS PASS** only when every check agrees. If you open the file from email and the cells are blank, click *Enable Editing* so Excel can calculate. |
+| **Recompute** | The per-point formulas behind Verification: each value looked up in its source row, each moving range, and each flag. |
+| **Worked formulas** | Each calculation written out with this data's numbers, e.g. `UCL = 6.01104e+07 + 3 × 2.97635e+07`. Includes the source of the constants d₂ = 1.128 and d₃ = 0.8525. |
+| **Input audit** | Every row of the source sheet: its row number in the original file, raw and parsed date and value, and whether it was charted. If it was excluded, the reason is given (blank or non-numeric value, blank or unreadable date). |
+| **Data** | Each charted point, with its **Source row**, so you can find it in the original file. |
+
+The test suite checks that the Verification sheet evaluates to ALL CHECKS PASS. It also checks that changing a single value makes it fail.
 
 ## Input files
 
@@ -44,6 +60,7 @@ imr-chart-cli data.csv -c Value --sigma 2 --date-column "Run Date"
 | `--sheet` | Choose a worksheet |
 | `--no-date` | Plot in row order instead of by date |
 | `--label-column` | Choose the hover/lot column |
+| `--recent-days N` | Highlight the last N days (default 30; `0` turns it off). In the GUI, use **Highlight recent** |
 
 ## Development
 

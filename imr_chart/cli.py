@@ -6,6 +6,7 @@ import argparse
 import sys
 
 from . import __version__, loader
+from .plot_static import DEFAULT_RECENT_DAYS
 from .report import FORMATS, build_job
 from .stats import parse_limit
 
@@ -25,6 +26,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--lsl", action="append", dest="lsls", metavar="VALUE",
                    help="Lower spec limit, e.g. 2e7 or 50%%; repeat once per --column (or give one for all)")
     p.add_argument("--sigma", type=float, default=3.0, help="Sigma multiplier for control limits (default 3)")
+    p.add_argument("--recent-days", type=int, default=DEFAULT_RECENT_DAYS, metavar="N",
+                   help=f"Highlight the last N days of data (default {DEFAULT_RECENT_DAYS}; 0 disables)")
     p.add_argument("-o", "--out", default=".", help="Output directory (default: current directory)")
     p.add_argument("--formats", default=",".join(FORMATS),
                    help=f"Comma-separated output formats from {', '.join(FORMATS)} (default: all)")
@@ -55,6 +58,9 @@ def main(argv: list[str] | None = None) -> int:
         if bad:
             print(f"error: unknown format(s): {', '.join(bad)}", file=sys.stderr)
             return 2
+        if args.recent_days < 0:
+            print("error: --recent-days must be 0 or more", file=sys.stderr)
+            return 2
 
         lsls = [parse_limit(v) for v in (args.lsls or [])]
         if len(lsls) > 1 and len(lsls) != len(args.columns):
@@ -63,9 +69,11 @@ def main(argv: list[str] | None = None) -> int:
         if len(lsls) <= 1:
             lsls = (lsls or [None]) * len(args.columns)
 
+        sheet = None if loader.is_csv(args.file) else (args.sheet or loader.list_sheets(args.file)[0])
         date_col = None if args.no_date else (args.date_column or loader.pick_date_column(df))
         for column, lsl in zip(args.columns, lsls):
-            job = build_job(df, args.file, column, date_col, lsl=lsl, k=args.sigma, label_column=args.label_column)
+            job = build_job(df, args.file, column, date_col, lsl=lsl, k=args.sigma, label_column=args.label_column,
+                            recent_days=args.recent_days, sheet=sheet)
             r = job.result
             print(f"{column}: n={r.n} excluded={job.excluded} mean={r.mean:.6g} "
                   f"UCL={r.ucl:.6g} LCL={r.lcl:.6g} MR-UCL={r.mr_ucl:.6g}")
