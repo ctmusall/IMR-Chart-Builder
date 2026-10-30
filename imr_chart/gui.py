@@ -31,6 +31,7 @@ from PySide6.QtWidgets import (  # noqa: E402
     QSpinBox,
     QTableWidget,
     QTableWidgetItem,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
@@ -257,9 +258,24 @@ class MainWindow(QMainWindow):
         self.canvas = None
         self.toolbar = None
 
+        # Everything above the action buttons can be folded away to give the chart the room.
+        self.settings_panel = QWidget()
+        settings = QVBoxLayout(self.settings_panel)
+        settings.setContentsMargins(0, 0, 0, 0)
+        settings.addLayout(form)
+        settings.addWidget(self.rules_editor)
+        self.settings_toggle = QToolButton()
+        self.settings_toggle.setText("Data && rules")
+        self.settings_toggle.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
+        self.settings_toggle.setCheckable(True)
+        self.settings_toggle.setChecked(True)
+        self.settings_toggle.setArrowType(Qt.DownArrow)
+        self.settings_toggle.setAutoRaise(True)
+        self.settings_toggle.toggled.connect(self.set_settings_visible)
+
         root = QVBoxLayout()
-        root.addLayout(form)
-        root.addWidget(self.rules_editor)
+        root.addWidget(self.settings_toggle)
+        root.addWidget(self.settings_panel)
         root.addLayout(buttons)
         root.addWidget(self.stats_label)
         root.addLayout(self.canvas_holder)
@@ -278,6 +294,14 @@ class MainWindow(QMainWindow):
         self._update_enabled()
 
     # -- state -----------------------------------------------------------
+    def set_settings_visible(self, visible: bool):
+        """Show or fold away the file/column/limit settings and the highlight rules."""
+        self.settings_toggle.blockSignals(True)
+        self.settings_toggle.setChecked(visible)
+        self.settings_toggle.blockSignals(False)
+        self.settings_toggle.setArrowType(Qt.DownArrow if visible else Qt.RightArrow)
+        self.settings_panel.setVisible(visible)
+
     def _update_enabled(self):
         loaded = self.tables is not None
         for w in (self.sheet_box, self.column_box, self.date_box, self.lsl_edit, self.sigma_spin, self.recent_spin,

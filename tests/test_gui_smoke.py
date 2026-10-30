@@ -120,3 +120,12 @@ def test_highlight_rules(win, xlsx_with_header_tab, tmp_path):
     ed.add_rule()  # blank column: generating reports which rule is incomplete
     assert win.generate() is False
     assert "Highlight rule 3" in win.errors[-1]
+
+
+def test_collapse_settings(win):
+    win.show()
+    assert win.settings_panel.isVisible()
+    win.settings_toggle.click()
+    assert not win.settings_panel.isVisible() and win.generate_btn.isVisible()
+    win.set_settings_visible(True)
+    assert win.settings_panel.isVisible() and win.settings_toggle.isChecked()
