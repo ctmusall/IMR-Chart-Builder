@@ -9,6 +9,15 @@ Generates **Individual & Moving Range (I-MR) control charts** from Excel or CSV 
 
 Outputs: **PNG** image, **interactive HTML** (hover a point to see its lot number, date, and value), and an **Excel stats** workbook. The workbook proves that the chart's numbers match the input (see below).
 
+## Download
+
+Download the latest build from the [Releases page](https://github.com/ctmusall/kelseys_tool/releases/latest). No GitHub account is needed.
+
+- **Windows:** [imr-chart.exe](https://github.com/ctmusall/kelseys_tool/releases/latest/download/imr-chart.exe). Double-click to run. Windows may show a SmartScreen warning because the exe isn't code-signed: click *More info* → *Run anyway*.
+- **Linux:** [imr-chart-linux](https://github.com/ctmusall/kelseys_tool/releases/latest/download/imr-chart-linux). Run `chmod +x imr-chart-linux` once, then run it.
+
+Each push to `main` that passes the tests publishes a new release automatically.
+
 ## Calculations (same as JMP's defaults)
 
 | | Formula |
@@ -79,6 +88,6 @@ PyInstaller cannot cross-compile, so build each OS's executable on that OS.
 |---|---|---|
 | **Linux** | `./build.sh` | `dist/imr-chart` (GUI) and `dist/imr-chart-cli` |
 | **Windows** | Install Python 3.10+ from python.org, then run `powershell -ExecutionPolicy Bypass -File build.ps1` | `dist\imr-chart.exe` and `dist\imr-chart-cli.exe` |
-| **GitHub Actions** | Push to GitHub; `.github/workflows/build.yml` tests and builds both platforms | Download the exes from the run's artifacts |
+| **GitHub Actions** | Push to `main`. `.github/workflows/build.yml` tests and builds both platforms, then publishes them as a public release named after the version in `imr_chart/__init__.py` | The [Releases page](https://github.com/ctmusall/kelseys_tool/releases/latest) |
 
 Both build scripts run the full test suite before building. `sheet.xlsx` holds real QC data, so keep it out of public repositories. The tests that use it skip automatically when it's absent.

@@ -46,3 +46,42 @@ jobs:
         with:
           name: imr-chart-${{ runner.os }}
           path: dist/*
+
+  # After every successful build on main, publish the executables as a public GitHub Release
+  # (downloadable by anyone, no GitHub account needed; the artifacts above need a login and expire).
+  # The release is named after the program version; pushing again without a version bump replaces
+  # it, so its tag always points at the commit the files were built from.
+  release:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency: release
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(sed -n 's/^__version__ = "\(.*\)"/\1/p' imr_chart/__init__.py)
+          tag="v${version}"
+          mkdir release
+          cp imr-chart-Windows/imr-chart.exe imr-chart-Windows/imr-chart-cli.exe release/
+          cp imr-chart-Linux/imr-chart release/imr-chart-linux
+          cp imr-chart-Linux/imr-chart-cli release/imr-chart-cli-linux
+          (cd release && sha256sum * > SHA256SUMS.txt)
+          cat > notes.md <<NOTES
+          Built from commit ${GITHUB_SHA::7} after all tests passed.
+
+          - **Windows:** download **imr-chart.exe** and double-click it (\`imr-chart-cli.exe\` is the command-line version).
+            Windows may show a SmartScreen warning because the exe isn't code-signed: click *More info* → *Run anyway*.
+          - **Linux:** download **imr-chart-linux**, run \`chmod +x imr-chart-linux\`, then run it.
+          - **SHA256SUMS.txt** lists each file's fingerprint.
+          NOTES
+          gh release delete "$tag" --cleanup-tag --yes 2>/dev/null || true
+          gh release create "$tag" release/* --target "$GITHUB_SHA" --latest \
+            --title "I-MR Chart Builder $tag" --notes-file notes.md
