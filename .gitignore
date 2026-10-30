@@ -1,0 +1,17 @@
+.venv/
+build/
+dist/
+__pycache__/
+*.egg-info/
+.coverage
+.pytest_cache/
+out/
+
+# Generated chart outputs
+IMR_*.png
+IMR_*.html
+IMR_*.xlsx
+
+# Local QC data and reference photo (kept out of version control)
+sheet.xlsx
+charts.jpg
