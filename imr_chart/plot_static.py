@@ -34,6 +34,18 @@ def recent_mask(data: pd.DataFrame, days: int | None) -> np.ndarray | None:
     return (dates >= dates.max() - pd.Timedelta(days=days)).to_numpy()
 
 
+def highlight_groups(data: pd.DataFrame) -> list[tuple[str, str, np.ndarray]]:
+    """``(rule label, color, point mask)`` for each highlight rule that matched a charted point."""
+    if "highlight" not in data:
+        return []
+    labels, colors = data["rule"].to_numpy(), data["highlight"].to_numpy()
+    out = []
+    for label, color in dict.fromkeys(zip(labels, colors)):
+        if color:
+            out.append((label, color, (labels == label) & (colors == color)))
+    return out
+
+
 def looks_like_fraction(values) -> bool:
     """True when the data look like proportions (e.g. viability 0.89 = 89%)."""
     v = np.asarray(values, dtype=float)
@@ -135,6 +147,16 @@ def build_figure(
                       xytext=(2, -2), textcoords="offset points", ha="left", va="top",
                       color=RECENT_COLOR, fontsize=8, fontweight="bold", zorder=5)
 
+    # Highlight rules: recolor matched points (beyond-limit rings stay on top).
+    groups = highlight_groups(data)
+    handles = []
+    for label, color, mask in groups:
+        handles.append(ax_i.scatter(np.asarray(x)[mask], result.values[mask], s=14, color=color, zorder=3.7,
+                                    linewidths=0, label=f"{label} ({int(mask.sum())})"))
+        ax_mr.scatter(np.asarray(x)[mask], mr[mask], s=14, color=color, zorder=3.7, linewidths=0)
+    if handles:
+        ax_i.legend(handles=handles, loc="best", fontsize=8, framealpha=0.85, borderpad=0.4, handletextpad=0.3)
+
     for ax in (ax_i, ax_mr):
         ax.grid(axis="y", color="#e6e6e6", linewidth=0.6)
         ax.set_axisbelow(True)
@@ -169,6 +191,8 @@ def build_figure(
         note += f",  {int(result.below_lsl.sum())} below LSL"
     if sources > 1:
         note += f"   |   Data from {sources} files"
+    if groups:
+        note += f"   |   Highlighted by rules: {sum(int(m.sum()) for _, _, m in groups)}"
     if recent is not None:
         note += f"   |   Highlighted: last {recent_days} days (from {pd.Timestamp(x[recent].min()):%m/%d/%Y})"
     if excluded:

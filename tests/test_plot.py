@@ -153,3 +153,40 @@ def test_html_recent_highlight():
     assert any(s.type == "rect" and s.fillcolor == plot_static.RECENT_BAND_COLOR for s in fig.layout.shapes)
     off = plot_html.build_html_figure(data, r, "C", percent=False, recent_days=0)
     assert plot_static.RECENT_COLOR not in list(off.data[0].marker.color)
+
+
+def ruled(values):
+    data = make_data(values)
+    data["rule"] = ["hot" if i % 3 == 0 else "" for i in range(len(values))]
+    data["highlight"] = np.where(data["rule"] != "", "#ff00ff", "")
+    return data
+
+
+def test_static_rule_highlight():
+    vals = [5.0, 6.0, 5.5, 50.0, 5.2, 5.8, 6.1]
+    fig = plot_static.build_figure(ruled(vals), compute_imr(vals), "V", recent_days=0)
+    ax_i, ax_mr = fig.axes
+    for ax in (ax_i, ax_mr):
+        magenta = [c for c in ax.collections
+                   if len(c.get_facecolors()) and matplotlib.colors.to_hex(c.get_facecolors()[0]) == "#ff00ff"]
+        assert len(magenta) == 1 and len(magenta[0].get_offsets()) == 3
+    assert [t.get_text() for t in ax_i.get_legend().get_texts()] == ["hot (3)"]
+    assert any("Highlighted by rules: 3" in t.get_text() for t in fig.texts)
+
+
+def test_html_rule_highlight():
+    vals = [5.0, 6.0, 5.5, 50.0, 5.2, 5.8, 6.1]
+    r = compute_imr(vals, k=1)
+    fig = plot_html.build_html_figure(ruled(vals), r, "V", recent_days=0)
+    colors = list(fig.data[0].marker.color)
+    assert colors.count("#ff00ff") == 3 and colors[1] == plot_static.POINT_COLOR
+    flagged = r.above_ucl | r.below_lcl
+    assert flagged[3] and fig.data[0].marker.line.color[3] == plot_static.LIMIT_COLOR  # ring kept
+    assert fig.layout.showlegend and fig.data[2].name == "hot (3)" and fig.data[2].showlegend
+    assert "Rule: hot" in fig.data[0].customdata[0, -1]
+
+
+def test_no_rules_no_legend(big):
+    data, r = big
+    assert plot_static.build_figure(data, r, "V").axes[0].get_legend() is None
+    assert not plot_html.build_html_figure(data, r, "V").layout.showlegend

@@ -11,6 +11,7 @@ import pandas as pd
 
 from . import __version__, export_xlsx, loader, plot_html, plot_static
 from .proof import file_sha256
+from .rules import Rule
 from .stats import ImrResult, compute_imr
 
 FORMATS = ("png", "html", "xlsx")
@@ -29,6 +30,7 @@ class ChartJob:
     sheet: str | None = None
     label_column: str | None = None
     sha256s: list[str | None] = field(default_factory=list, repr=False)
+    rules: list[Rule] = field(default_factory=list)
 
     @property
     def source(self) -> Path:
@@ -42,6 +44,11 @@ class ChartJob:
         key = self.data[["label", "date", "value"]].astype(str).agg("|".join, axis=1)
         files_per_key = self.data.groupby(key)["file"].transform("nunique")
         return int((files_per_key > 1).sum())
+
+    @property
+    def highlighted(self) -> int:
+        """Charted points colored by a highlight rule."""
+        return int((self.data["highlight"] != "").sum()) if "highlight" in self.data else 0
 
     def figure(self):
         return plot_static.build_figure(self.data, self.result, self.column,
@@ -78,6 +85,8 @@ class ChartJob:
             "Sheet": self.sheet or "(default)",
             "Date column": self.date_column or "(row order)",
             "Label column": self.label_column or "(row number)",
+            "Highlight rules": "; ".join(f"{r.describe()} → {r.color}" + ("" if r.enabled else " (off)")
+                                         for r in self.rules) or "(none)",
             "Recent highlight (days)": self.recent_days or "off",
             "Generated": datetime.now().astimezone().strftime("%Y-%m-%d %H:%M:%S %Z"),
             "Program version": f"imr-chart {__version__}",
@@ -106,9 +115,10 @@ def build_job(
     label_column: str | None = None,
     recent_days: int = plot_static.DEFAULT_RECENT_DAYS,
     sheet: str | None = None,
+    rules: list[Rule] | None = None,
 ) -> ChartJob:
     return build_multi_job([(source, df)], column, date_column, lsl=lsl, k=k, label_column=label_column,
-                           recent_days=recent_days, sheet=sheet)
+                           recent_days=recent_days, sheet=sheet, rules=rules)
 
 
 def build_multi_job(
@@ -120,6 +130,7 @@ def build_multi_job(
     label_column: str | None = None,
     recent_days: int = plot_static.DEFAULT_RECENT_DAYS,
     sheet: str | None = None,
+    rules: list[Rule] | None = None,
 ) -> ChartJob:
     """One chart pooling every row of several same-layout files (sorted by date, or kept in file order)."""
     if not tables:
@@ -131,9 +142,9 @@ def build_multi_job(
     if len(set(names)) < len(names):  # same file name in different folders: keep them apart
         names = [str(src) for src in sources]
     audit = loader.audit_files([(name, df) for name, (_, df) in zip(names, tables)],
-                               column, date_column, label_column)
+                               column, date_column, label_column, rules=rules)
     data, excluded = loader.included_series(audit, by_date=date_column is not None)
     result = compute_imr(data["value"].to_numpy(), k=k, lsl=lsl)
     return ChartJob(sources, column, date_column, data, result, excluded, recent_days,
                     audit=audit, sheet=sheet, label_column=label_column,
-                    sha256s=[file_sha256(src) for src in sources])
+                    sha256s=[file_sha256(src) for src in sources], rules=list(rules or []))

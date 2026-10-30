@@ -19,6 +19,7 @@ from .plot_static import (
     RECENT_COLOR,
     _show_lcl,
     format_number,
+    highlight_groups,
     looks_like_fraction,
     lsl_label,
     recent_mask,
@@ -48,20 +49,29 @@ def build_html_figure(
     custom = [labels]
     if sources > 1 and "file" in data:
         custom.append(data["file"])
-        date_part += "<br>%{customdata[1]}"
+        date_part += f"<br>%{{customdata[{len(custom) - 1}]}}"
+    groups = highlight_groups(data)
+    if groups:
+        custom.append(np.where(data["rule"] != "", "<br>Rule: " + data["rule"].astype(str), ""))
+        date_part += f"%{{customdata[{len(custom) - 1}]}}"
     mr = result.moving_ranges
     recent = recent_mask(data, recent_days)
     if recent is not None and not recent.any():
         recent = None
     base = np.where(recent, RECENT_COLOR, POINT_COLOR) if recent is not None else POINT_COLOR
 
-    def colors(flags):
-        return np.where(flags, LIMIT_COLOR, base)
+    def marker(flags):
+        if not groups:
+            return {"size": 6, "color": np.where(flags, LIMIT_COLOR, base)}
+        # Rule colors fill the point, so beyond-limit points are ringed in red instead of filled.
+        fill = np.where(data["highlight"] != "", data["highlight"], base)
+        return {"size": np.where(flags, 9, 6), "color": fill,
+                "line": {"color": np.where(flags, LIMIT_COLOR, "rgba(0,0,0,0)"), "width": 2}}
 
     fig.add_trace(
         go.Scatter(
-            x=x, y=result.values, mode="lines+markers", name=column,
-            line={"color": "#9a9a9a", "width": 1}, marker={"size": 6, "color": colors(result.above_ucl | result.below_lcl)},
+            x=x, y=result.values, mode="lines+markers", name=column, showlegend=False,
+            line={"color": "#9a9a9a", "width": 1}, marker=marker(result.above_ucl | result.below_lcl),
             customdata=np.column_stack(custom),
             hovertemplate=f"<b>%{{customdata[0]}}</b><br>{date_part}<br>Value: %{{y:{vfmt}}}<extra></extra>",
         ),
@@ -69,13 +79,17 @@ def build_html_figure(
     )
     fig.add_trace(
         go.Scatter(
-            x=x, y=mr, mode="lines+markers", name="Moving Range",
-            line={"color": "#9a9a9a", "width": 1}, marker={"size": 6, "color": colors(result.mr_above_ucl)},
+            x=x, y=mr, mode="lines+markers", name="Moving Range", showlegend=False,
+            line={"color": "#9a9a9a", "width": 1}, marker=marker(result.mr_above_ucl),
             customdata=np.column_stack(custom),
             hovertemplate=f"<b>%{{customdata[0]}}</b><br>{date_part}<br>MR: %{{y:{vfmt}}}<extra></extra>",
         ),
         row=2, col=1,
     )
+    for label, color, mask in groups:  # legend entries only
+        fig.add_trace(go.Scatter(x=[None], y=[None], mode="markers", marker={"size": 8, "color": color},
+                                 name=f"{label} ({int(mask.sum())})", showlegend=True, hoverinfo="skip"),
+                      row=1, col=1)
 
     # Added after the traces: row="all" skips subplots that are still empty.
     if recent is not None:
@@ -114,11 +128,14 @@ def build_html_figure(
         subtitle += f" · highlighted: last {recent_days} days (from {start:%m/%d/%Y})"
     if sources > 1:
         subtitle += f" · data from {sources} files"
+    if groups:
+        subtitle += f" · {sum(int(m.sum()) for _, _, m in groups)} points highlighted by rules"
     if excluded:
         subtitle += f" · {excluded} rows excluded"
     fig.update_layout(
         title={"text": f"<b>Individual & Moving Range chart of {column}</b><br><sup>{subtitle}</sup>", "x": 0.5},
-        template="plotly_white", showlegend=False, hovermode="closest",
+        template="plotly_white", showlegend=bool(groups),
+        legend={"orientation": "h", "yanchor": "bottom", "y": 1.0, "xanchor": "right", "x": 1}, hovermode="closest",
         height=800, margin={"r": 120},
     )
     return fig

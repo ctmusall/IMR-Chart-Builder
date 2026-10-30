@@ -79,3 +79,20 @@ def test_entry_routing(monkeypatch):
     monkeypatch.setattr("imr_chart.cli.main", lambda argv: called.setdefault("cli", argv) and 0)
     entry.main()
     assert called["cli"] == ["f.xlsx", "--list-columns"]
+
+
+def test_rules_file(xlsx_with_header_tab, tmp_path, capsys):
+    rules = tmp_path / "rules.json"
+    rules.write_text('{"rules": [{"name": "b", "column": "Notes", "op": "=", "value": "b", "color": "red"}]}')
+    rc = main([str(xlsx_with_header_tab), "-c", "QC3 CD34/Unit", "--rules", str(rules), "--formats", "html",
+               "-o", str(tmp_path)])
+    assert rc == 0
+    assert "highlighted=1" in capsys.readouterr().out
+    assert "Rule: b" in (tmp_path / "IMR_QC3_CD34_Unit.html").read_text(encoding="utf-8")
+
+
+def test_bad_rules_file(xlsx_with_header_tab, tmp_path, capsys):
+    rules = tmp_path / "rules.json"
+    rules.write_text('{"rules": [{"column": "Nope", "op": "=", "value": "b"}]}')
+    assert main([str(xlsx_with_header_tab), "-c", "QC3 CD34/Unit", "--rules", str(rules), "-o", str(tmp_path)]) == 1
+    assert "column 'Nope' not found" in capsys.readouterr().err

@@ -81,6 +81,7 @@ def points_frame(data: pd.DataFrame, result: ImrResult) -> pd.DataFrame:
             "MR above UCL": result.mr_above_ucl,
             "Source row": _source_rows(data, result.n),
             "Source file": _source_files(data, result.n),
+            "Highlight rule": data["rule"].to_numpy() if "rule" in data else np.full(result.n, ""),
         }
     )
 
@@ -120,6 +121,15 @@ def _style(ws, flag_cols: list[int] | None = None):
             if any(row[c - 1].value is True for c in flag_cols):
                 for cell in row:
                     cell.fill = FLAG_FILL
+
+
+def _color_rule_cells(ws, data: pd.DataFrame, col: int):
+    """Fill each Data row's 'Highlight rule' cell with that rule's color."""
+    if "highlight" not in data:
+        return
+    for r, color in enumerate(data["highlight"], start=2):
+        if color:
+            ws.cell(row=r, column=col).fill = PatternFill("solid", fgColor=color.lstrip("#").upper())
 
 
 def _same(a: str, b: str) -> str:
@@ -296,6 +306,7 @@ def save_xlsx(
         flagged.to_excel(xw, sheet_name="Out of limits", index=False)
         _style(xw.sheets["Summary stats"])
         _style(xw.sheets["Data"], flag_cols=[5, 6, 7, 8])
+        _color_rule_cells(xw.sheets["Data"], data, points.columns.get_loc("Highlight rule") + 1)
         _style(xw.sheets["Input audit"])
         _style(xw.sheets["Out of limits"])
         xw.book.calculation.fullCalcOnLoad = True

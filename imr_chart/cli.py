@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 import sys
 
-from . import __version__, loader
+from . import __version__, loader, rules
 from .plot_static import DEFAULT_RECENT_DAYS
 from .report import FORMATS, build_multi_job
 from .stats import parse_limit
@@ -31,6 +31,9 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--sigma", type=float, default=3.0, help="Sigma multiplier for control limits (default 3)")
     p.add_argument("--recent-days", type=int, default=DEFAULT_RECENT_DAYS, metavar="N",
                    help=f"Highlight the last N days of data (default {DEFAULT_RECENT_DAYS}; 0 disables)")
+    p.add_argument("--rules", metavar="FILE",
+                   help="JSON file of highlight rules: points whose row matches a rule are drawn in its color "
+                        "(save one from the GUI, or see the README)")
     p.add_argument("-o", "--out", default=".", help="Output directory (default: current directory)")
     p.add_argument("--formats", default=",".join(FORMATS),
                    help=f"Comma-separated output formats from {', '.join(FORMATS)} (default: all)")
@@ -82,17 +85,19 @@ def main(argv: list[str] | None = None) -> int:
         if len(lsls) <= 1:
             lsls = (lsls or [None]) * len(args.columns)
 
+        highlight_rules = rules.load_rules(args.rules) if args.rules else []
         sheets = sorted({loader.list_sheets(f)[0] if args.sheet is None else args.sheet
                          for f in args.files if not loader.is_csv(f)})
         sheet = ", ".join(sheets) or None
         date_col = None if args.no_date else (args.date_column or loader.pick_date_column(frames[0]))
         for column, lsl in zip(args.columns, lsls):
             job = build_multi_job(tables, column, date_col, lsl=lsl, k=args.sigma, label_column=args.label_column,
-                                  recent_days=args.recent_days, sheet=sheet)
+                                  recent_days=args.recent_days, sheet=sheet, rules=highlight_rules)
             r = job.result
             files = f"files={len(job.sources)} " if len(job.sources) > 1 else ""
             print(f"{column}: {files}n={r.n} excluded={job.excluded} mean={r.mean:.6g} "
-                  f"UCL={r.ucl:.6g} LCL={r.lcl:.6g} MR-UCL={r.mr_ucl:.6g}")
+                  f"UCL={r.ucl:.6g} LCL={r.lcl:.6g} MR-UCL={r.mr_ucl:.6g}"
+                  + (f" highlighted={job.highlighted}" if highlight_rules else ""))
             if job.duplicates:
                 print(f"  warning: {job.duplicates} points have the same lot, date and value in more than one file "
                       "(overlapping exports?); all are charted", file=sys.stderr)

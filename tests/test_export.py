@@ -41,3 +41,16 @@ def test_xlsx_export_without_lsl_or_dates(tmp_path):
     stats = {row[0]: row[1] for row in openpyxl.load_workbook(path)["Summary stats"].iter_rows(min_row=2, values_only=True)}
     assert stats["LSL"] == "—"
     assert stats["Points below LSL"] == "—"
+
+
+def test_xlsx_highlight_rule_column(tmp_path):
+    vals = [10, 12, 11, 30]
+    data = pd.DataFrame({"date": pd.date_range("2024-01-01", periods=4), "label": list("abcd"), "value": vals,
+                         "rule": ["", "big", "", "big"], "highlight": ["", "#ff00ff", "", "#ff00ff"]})
+    path = save_xlsx(data, compute_imr(vals), "V", tmp_path / "out.xlsx")
+    ws = openpyxl.load_workbook(path)["Data"]
+    header = [c.value for c in ws[1]]
+    col = header.index("Highlight rule") + 1
+    assert header[8:10] == ["Source row", "Source file"]  # Recompute's lookups are unaffected
+    assert [ws.cell(r, col).value for r in range(2, 6)] == [None, "big", None, "big"]
+    assert ws.cell(3, col).fill.fgColor.rgb.endswith("FF00FF")

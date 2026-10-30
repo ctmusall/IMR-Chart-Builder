@@ -195,11 +195,14 @@ def audit_rows(
     date_col: str | None = None,
     label_col: str | None = None,
     source: str = "",
+    rules: list | None = None,
 ) -> pd.DataFrame:
     """One row per input row: raw and parsed values, and whether it is charted and why not.
 
     Columns: ``row`` (source line number), ``label``, ``raw_date``, ``raw_value``,
     ``date``, ``value``, ``file`` (``source``), ``included`` and ``reason`` (blank when included).
+    With highlight ``rules`` (:mod:`imr_chart.rules`), also ``rule`` and ``highlight``: the first
+    matching rule's label and color, blank when no rule matches.
     """
     if value_col not in df.columns:
         raise KeyError(f"Column '{value_col}' not found")
@@ -230,6 +233,10 @@ def audit_rows(
     reason[_is_blank(raw_value)] = "Value blank"
     out["reason"] = reason
     out["included"] = reason == ""
+    if rules:
+        from .rules import apply  # rules imports this module
+
+        out["rule"], out["highlight"] = apply(rules, df)
     return out.reset_index(drop=True)
 
 
@@ -238,6 +245,7 @@ def prepare_series(
     value_col: str,
     date_col: str | None = None,
     label_col: str | None = None,
+    rules: list | None = None,
 ) -> tuple[pd.DataFrame, int]:
     """Return a clean frame with columns ``date``, ``label``, ``value`` and ``row``.
 
@@ -245,7 +253,7 @@ def prepare_series(
     is used) are dropped and counted as excluded; see :func:`audit_rows` for why.
     Rows are sorted by date (stable, so original order breaks ties).
     """
-    return included_series(audit_rows(df, value_col, date_col, label_col), by_date=date_col is not None)
+    return included_series(audit_rows(df, value_col, date_col, label_col, rules=rules), by_date=date_col is not None)
 
 
 def audit_files(
@@ -253,12 +261,13 @@ def audit_files(
     value_col: str,
     date_col: str | None = None,
     label_col: str | None = None,
+    rules: list | None = None,
 ) -> pd.DataFrame:
     """:func:`audit_rows` for several ``(file name, frame)`` pairs with the same layout, concatenated in order."""
     parts = []
     for name, df in tables:
         try:
-            parts.append(audit_rows(df, value_col, date_col, label_col, source=name))
+            parts.append(audit_rows(df, value_col, date_col, label_col, source=name, rules=rules))
         except KeyError as exc:
             raise KeyError(f"{exc.args[0]} in {name}") from None
     return pd.concat(parts, ignore_index=True)
@@ -284,7 +293,7 @@ def pooled_numeric_columns(frames: list[pd.DataFrame]) -> list[str]:
 
 def included_series(audit: pd.DataFrame, by_date: bool) -> tuple[pd.DataFrame, int]:
     """Split an :func:`audit_rows` frame into the charted series and the excluded count."""
-    cols = ["date", "label", "value", "row"] + (["file"] if "file" in audit else [])
+    cols = ["date", "label", "value", "row"] + [c for c in ("file", "rule", "highlight") if c in audit]
     out = audit.loc[audit["included"], cols]
     if by_date:
         out = out.sort_values("date", kind="stable")

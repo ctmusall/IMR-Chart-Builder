@@ -73,6 +73,26 @@ imr-chart-cli jan.xlsx feb.xlsx mar.xlsx -c "QC3 CD34/Unit" --lsl 2e7   # one ch
 | `--no-date` | Plot in row order instead of by date |
 | `--label-column` | Choose the hover/lot column |
 | `--recent-days N` | Highlight the last N days (default 30; `0` turns it off). In the GUI, use **Highlight recent** |
+| `--rules FILE` | Color points by highlight rules from a JSON file (see below) |
+
+### Highlight rules
+
+A highlight rule colors every point whose source row matches a condition. A rule can test any column of the row, not only the charted one, e.g. `Notes contains retest` or `QC3 CD34 Viability < 90%`. Rules are checked top to bottom and the **first matching rule** decides a point's color. Points beyond the control limits keep their red ring. The chart legend shows how many points each rule matched, and the Excel **Data** sheet has a **Highlight rule** column.
+
+| Operator | Matches when the cell… |
+|---|---|
+| `=` `<>` `<` `<=` `>` `>=` | compares with a number (`2e7`, `1,000`, `50%`) or a date (`2025-01-01`, `04/01/2024`). `=` and `<>` also compare text (ignoring case) |
+| `contains`, `not contains`, `starts with`, `ends with` | holds the text, ignoring case |
+| `is blank`, `is not blank` | is empty, or not |
+
+In the GUI, edit the **Highlight rules** table (Add / Remove / Up / Down, click a color to change it) and use **Save rules…** to write a file that `--rules` can read:
+```json
+{"rules": [
+  {"name": "Retest", "column": "Notes", "op": "contains", "value": "retest", "color": "#ff00ff"},
+  {"name": "", "column": "QC3 CD34 Viability", "op": "<", "value": "90%", "color": "#2ca02c", "enabled": true}
+]}
+```
+A blank `name` shows the condition itself in the legend.
 
 ## Development
 

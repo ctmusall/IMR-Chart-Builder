@@ -95,3 +95,28 @@ def test_multiple_files(win, xlsx_split, tmp_path):
     for fmt in ("png", "html", "xlsx"):
         assert win.save(fmt, "", path=str(tmp_path / f"pooled_{fmt}")) is not None
     assert win.errors == []
+
+
+def test_highlight_rules(win, xlsx_with_header_tab, tmp_path):
+    from imr_chart.rules import Rule, load_rules, save_rules
+
+    win.open_path(xlsx_with_header_tab)
+    ed = win.rules_editor
+    assert "Notes" in ed.columns
+    ed.add_rule(Rule("note b", "Notes", "=", "b", "#ff00ff"))
+    ed.add_rule({"column": "QC Lot", "op": "=", "value": "L2"})
+    ed.move_rule(-1)  # second row (selected) moves to the top
+    assert [r.label for r in ed.rules()] == ["QC Lot = 'L2'", "note b"]
+    win.column_box.setCurrentText("QC3 CD34/Unit")
+    assert win.generate()
+    assert win.job.highlighted == 2 and "highlighted=2" in win.stats_label.text()
+
+    path = save_rules(ed.rules(), tmp_path / "r.json")
+    ed.set_rules([])
+    assert ed.rules() == []
+    ed.set_rules(load_rules(path))
+    assert [r.color for r in ed.rules()] == ["#9467bd", "#ff00ff"]
+
+    ed.add_rule()  # blank column: generating reports which rule is incomplete
+    assert win.generate() is False
+    assert "Highlight rule 3" in win.errors[-1]
