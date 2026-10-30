@@ -7,6 +7,8 @@ Generates **Individual & Moving Range (I-MR) control charts** from Excel or CSV 
 - a moving-range chart underneath, plotted against Date Processed
 - the **most recent 30 days** (counted back from the latest date in the file) shaded and drawn in orange, so new results stand out. Control limits still use all the data.
 
+**Several files at once.** Give it one file or many exports with the same layout (same sheet name and columns), and every row from all of them goes on one chart. Points are sorted by date across files; same-date ties keep the order the files were given. Control limits use all the pooled points. In the HTML, hovering a point shows which file it came from. If the same lot, date and value turns up in more than one file (overlapping exports), you get a warning. Those points are still charted.
+
 Outputs: **PNG** image, **interactive HTML** (hover a point to see its lot number, date, and value), and an **Excel stats** workbook. The workbook proves that the chart's numbers match the input (see below).
 
 ## Download
@@ -34,12 +36,12 @@ The Excel stats workbook (`.xlsx`) carries the evidence alongside the results:
 
 | Sheet | What it proves |
 |---|---|
-| **Summary stats** | Which input was charted. Includes the source file's **SHA-256 fingerprint**, path, sheet, columns, settings, program version and timestamp. Re-hash the file (`certutil -hashfile FILE SHA256` on Windows, `sha256sum FILE` on Linux) to confirm the input is the same file. |
+| **Summary stats** | Which input was charted. Includes each source file's **SHA-256 fingerprint**, path, sheet, columns, settings, program version and timestamp. Re-hash the file (`certutil -hashfile FILE SHA256` on Windows, `sha256sum FILE` on Linux) to confirm the input is the same file. |
 | **Verification** | Excel recomputes every number with its own formulas (n, mean, MR̄, σ, all limits, every flag count) and compares each with the program's value. Every check shows PASS or FAIL, and the top cell shows **ALL CHECKS PASS** only when every check agrees. If you open the file from email and the cells are blank, click *Enable Editing* so Excel can calculate. |
-| **Recompute** | The per-point formulas behind Verification: each value looked up in its source row, each moving range, and each flag. |
+| **Recompute** | The per-point formulas behind Verification: each value looked up in its source file and row, each moving range, and each flag. |
 | **Worked formulas** | Each calculation written out with this data's numbers, e.g. `UCL = 6.01104e+07 + 3 × 2.97635e+07`. Includes the source of the constants d₂ = 1.128 and d₃ = 0.8525. |
-| **Input audit** | Every row of the source sheet: its row number in the original file, raw and parsed date and value, and whether it was charted. If it was excluded, the reason is given (blank or non-numeric value, blank or unreadable date). |
-| **Data** | Each charted point, with its **Source row**, so you can find it in the original file. |
+| **Input audit** | Every row of each source sheet: its file and row number in the original file, raw and parsed date and value, and whether it was charted. If it was excluded, the reason is given (blank or non-numeric value, blank or unreadable date). |
+| **Data** | Each charted point, with its **Source row** and **Source file**, so you can find it in the original file. |
 
 The test suite checks that the Verification sheet evaluates to ALL CHECKS PASS. It also checks that changing a single value makes it fail.
 
@@ -53,8 +55,8 @@ The test suite checks that the Verification sheet evaluates to ALL CHECKS PASS. 
 ## Using the app
 
 **GUI:**
-1. Run `imr-chart.exe` (Windows) or `./imr-chart` (Linux). You can also drag a file onto the exe.
-2. Open a file and choose the sheet, column, and LSL.
+1. Run `imr-chart.exe` (Windows) or `./imr-chart` (Linux). You can also drag one or more files onto the exe.
+2. Open a file, or select several files with the same layout (Ctrl/Shift-click in the Open dialog), and choose the sheet, column, and LSL. Columns and sheets that all the files share are listed.
 3. Click **Generate chart**, then **Save PNG… / Save HTML… / Save Excel stats…**.
 
 **Command line** (`imr-chart-cli`):
@@ -63,10 +65,11 @@ imr-chart-cli sheet.xlsx --list-columns
 imr-chart-cli sheet.xlsx -c "QC3 CD34/Unit" --lsl 2e7 -o charts/
 imr-chart-cli sheet.xlsx -c "QC3 CD34/Unit" --lsl 2e7 -c "QC3 CD34 Viability" --lsl 50% --formats png,html
 imr-chart-cli data.csv -c Value --sigma 2 --date-column "Run Date"
+imr-chart-cli jan.xlsx feb.xlsx mar.xlsx -c "QC3 CD34/Unit" --lsl 2e7   # one chart from all three files
 ```
 | Option | Effect |
 |---|---|
-| `--sheet` | Choose a worksheet |
+| `--sheet` | Choose a worksheet (the same name in every file) |
 | `--no-date` | Plot in row order instead of by date |
 | `--label-column` | Choose the hover/lot column |
 | `--recent-days N` | Highlight the last N days (default 30; `0` turns it off). In the GUI, use **Highlight recent** |

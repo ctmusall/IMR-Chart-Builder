@@ -8,7 +8,8 @@ import sys
 
 
 def wants_gui(argv: list[str]) -> bool:
-    return len(argv) == 0 or (len(argv) == 1 and not argv[0].startswith("-"))
+    # Bare file paths (e.g. files dropped onto the exe) open the GUI; any option means the CLI.
+    return not any(a.startswith("-") for a in argv)
 
 
 def main() -> int:

@@ -61,3 +61,17 @@ def real_sheet() -> Path:
     if not REAL_SHEET.exists():
         pytest.skip("sheet.xlsx sample not present")
     return REAL_SHEET
+
+
+def _summary_workbook(path: Path, rows) -> Path:
+    with pd.ExcelWriter(path) as xw:
+        pd.DataFrame(rows).to_excel(xw, sheet_name="Summary", header=False, index=False)
+        pd.DataFrame([HEADERS]).to_excel(xw, sheet_name="Column Headers (Summary)", header=False, index=False)
+    return path
+
+
+@pytest.fixture
+def xlsx_split(tmp_path) -> list[Path]:
+    """ROWS split across two workbooks with the same layout, so both use Excel rows 1-3."""
+    return [_summary_workbook(tmp_path / "part1.xlsx", ROWS[:3]),
+            _summary_workbook(tmp_path / "part2.xlsx", ROWS[3:])]

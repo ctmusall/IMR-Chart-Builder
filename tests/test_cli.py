@@ -70,6 +70,7 @@ def test_real_workbook_end_to_end(real_sheet, tmp_path, capsys):
 def test_entry_routing(monkeypatch):
     assert entry.wants_gui([])
     assert entry.wants_gui(["file.xlsx"])
+    assert entry.wants_gui(["a.xlsx", "b.xlsx"])
     assert not entry.wants_gui(["file.xlsx", "-c", "X"])
     assert not entry.wants_gui(["--help"])
 

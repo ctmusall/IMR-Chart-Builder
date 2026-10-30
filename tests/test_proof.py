@@ -73,9 +73,9 @@ def test_input_audit_and_provenance(workbook, messy_csv):
     wb = openpyxl.load_workbook(path)
     audit = {r[1]: r for r in wb["Input audit"].iter_rows(min_row=2, values_only=True)}
     assert len(audit) == 10  # the blank line isn't a data row
-    assert audit["L4"][6:] == ("No", "Value blank")
-    assert audit["L5"][6:] == ("No", "Value not numeric")
-    assert audit["L7"][6:] == ("No", "Date blank")
+    assert audit["L4"][6:9] == ("No", "Value blank", "messy.csv")
+    assert audit["L5"][6:8] == ("No", "Value not numeric")
+    assert audit["L7"][6:8] == ("No", "Date blank")
     assert audit["L2"][0] == 5  # CSV line number, counting the header and the blank line
     stats = dict(wb["Summary stats"].iter_rows(min_row=2, values_only=True))
     assert stats["Source SHA-256"] == hashlib.sha256(messy_csv.read_bytes()).hexdigest()

@@ -30,7 +30,7 @@ from PySide6.QtWidgets import (  # noqa: E402
 
 from . import __version__, loader  # noqa: E402
 from .plot_static import DEFAULT_RECENT_DAYS  # noqa: E402
-from .report import ChartJob, build_job  # noqa: E402
+from .report import ChartJob, build_multi_job  # noqa: E402
 from .stats import parse_limit  # noqa: E402
 
 NO_DATE = "(row order)"
@@ -42,12 +42,12 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle(f"I-MR Chart Builder {__version__}")
         self.resize(1200, 900)
-        self.path: Path | None = None
-        self.df = None
+        self.paths: list[Path] = []
+        self.tables: list[tuple[Path, object]] | None = None  # (file, DataFrame) per input file
         self.job: ChartJob | None = None
 
         self.file_label = QLabel("No file loaded")
-        self.open_btn = QPushButton("Open file…")
+        self.open_btn = QPushButton("Open file(s)…")
         self.sheet_box = QComboBox()
         self.column_box = QComboBox()
         self.date_box = QComboBox()
@@ -73,7 +73,7 @@ class MainWindow(QMainWindow):
         file_row = QHBoxLayout()
         file_row.addWidget(self.open_btn)
         file_row.addWidget(self.file_label, 1)
-        form.addRow("File:", file_row)
+        form.addRow("Files:", file_row)
         form.addRow("Sheet:", self.sheet_box)
         form.addRow("Value column:", self.column_box)
         form.addRow("Date column:", self.date_box)
@@ -113,7 +113,7 @@ class MainWindow(QMainWindow):
 
     # -- state -----------------------------------------------------------
     def _update_enabled(self):
-        loaded = self.df is not None
+        loaded = self.tables is not None
         for w in (self.sheet_box, self.column_box, self.date_box, self.lsl_edit, self.sigma_spin, self.recent_spin,
                   self.generate_btn):
             w.setEnabled(loaded)
@@ -126,18 +126,32 @@ class MainWindow(QMainWindow):
 
     # -- actions ---------------------------------------------------------
     def choose_file(self):
-        path, _ = QFileDialog.getOpenFileName(self, "Open data file", "", FILE_FILTER)
-        if path:
-            self.open_path(path)
+        paths, _ = QFileDialog.getOpenFileNames(self, "Open data file(s) with the same layout", "", FILE_FILTER)
+        if paths:
+            self.open_paths(paths)
 
     def open_path(self, path: str | Path) -> bool:
+        return self.open_paths([path])
+
+    def open_paths(self, paths: list[str | Path]) -> bool:
+        """Open one or more files with the same layout; their rows are charted together."""
+        paths = [Path(p) for p in paths]
         try:
-            sheets = loader.list_sheets(path)
+            sheets = loader.common_columns([loader.list_sheets(p) for p in paths if not loader.is_csv(p)])
+            if all(loader.is_csv(p) for p in paths):
+                sheets = [paths[0].stem]
+            elif not sheets:
+                raise ValueError("These workbooks have no sheet name in common.")
         except Exception as exc:  # noqa: BLE001 - surface any read error to the user
             self.error("Could not open file", exc)
             return False
-        self.path = Path(path)
-        self.file_label.setText(str(self.path))
+        self.paths = paths
+        if len(paths) == 1:
+            self.file_label.setText(str(paths[0]))
+        else:
+            names = ", ".join(p.name for p in paths[:3]) + (", …" if len(paths) > 3 else "")
+            self.file_label.setText(f"{len(paths)} files: {names}")
+        self.file_label.setToolTip("\n".join(str(p) for p in paths))
         self.sheet_box.blockSignals(True)
         self.sheet_box.clear()
         self.sheet_box.addItems(sheets)
@@ -145,29 +159,33 @@ class MainWindow(QMainWindow):
         return self.load_sheet(sheets[0] if sheets else None)
 
     def load_sheet(self, sheet: str | None) -> bool:
-        if self.path is None or not sheet:
+        if not self.paths or not sheet:
             return False
-        try:
-            self.df = loader.load_table(self.path, None if loader.is_csv(self.path) else sheet)
-        except Exception as exc:  # noqa: BLE001
-            self.df = None
-            self._update_enabled()
-            self.error("Could not read sheet", exc)
-            return False
+        tables = []
+        for path in self.paths:
+            try:
+                tables.append((path, loader.load_table(path, None if loader.is_csv(path) else sheet)))
+            except Exception as exc:  # noqa: BLE001
+                self.tables = None
+                self._update_enabled()
+                self.error("Could not read sheet", f"{path.name}: {exc}" if len(self.paths) > 1 else exc)
+                return False
+        self.tables = tables
+        frames = [df for _, df in tables]
         prev_col = self.column_box.currentText()
         self.column_box.clear()
-        numeric = loader.numeric_columns(self.df)
+        numeric = loader.pooled_numeric_columns(frames)
         self.column_box.addItems(numeric)
         if prev_col in numeric:
             self.column_box.setCurrentText(prev_col)
         self.date_box.clear()
-        self.date_box.addItems(loader.date_columns(self.df) + [NO_DATE])
+        self.date_box.addItems(loader.common_columns([loader.date_columns(df) for df in frames]) + [NO_DATE])
         self.job = None
         self._update_enabled()
         return True
 
     def generate(self) -> bool:
-        if self.df is None:
+        if self.tables is None:
             return False
         column = self.column_box.currentText()
         if not column:
@@ -177,9 +195,10 @@ class MainWindow(QMainWindow):
         date_col = None if date_col in ("", NO_DATE) else date_col
         try:
             lsl = parse_limit(self.lsl_edit.text())
-            self.job = build_job(self.df, self.path, column, date_col, lsl=lsl, k=self.sigma_spin.value(),
-                                 recent_days=self.recent_spin.value(),
-                                 sheet=None if loader.is_csv(self.path) else self.sheet_box.currentText())
+            excel = not all(loader.is_csv(p) for p in self.paths)
+            self.job = build_multi_job(self.tables, column, date_col, lsl=lsl, k=self.sigma_spin.value(),
+                                       recent_days=self.recent_spin.value(),
+                                       sheet=self.sheet_box.currentText() if excel else None)
         except Exception as exc:  # noqa: BLE001
             self.job = None
             self._update_enabled()
@@ -187,11 +206,14 @@ class MainWindow(QMainWindow):
             return False
         self._show_figure()
         r = self.job.result
+        files = f"files={len(self.job.sources)}  " if len(self.job.sources) > 1 else ""
+        dupes = self.job.duplicates
         self.stats_label.setText(
-            f"n={r.n}  excluded={self.job.excluded}  mean={r.mean:.4g}  σ={r.sigma:.4g}  "
+            f"{files}n={r.n}  excluded={self.job.excluded}  mean={r.mean:.4g}  σ={r.sigma:.4g}  "
             f"UCL={r.ucl:.4g}  LCL={r.lcl:.4g}  MR̄={r.mr_bar:.4g}  MR UCL={r.mr_ucl:.4g}  "
             f"beyond limits={int((r.above_ucl | r.below_lcl).sum())}"
             + (f"  below LSL={int(r.below_lsl.sum())}" if r.lsl is not None else "")
+            + (f"  ⚠ {dupes} points repeated across files" if dupes else "")
         )
         self._update_enabled()
         return True
@@ -212,7 +234,7 @@ class MainWindow(QMainWindow):
         if self.job is None:
             return None
         if path is None:
-            start = (self.path.parent if self.path else Path.cwd()) / f"{self.job.default_stem()}.{fmt}"
+            start = (self.paths[0].parent if self.paths else Path.cwd()) / f"{self.job.default_stem()}.{fmt}"
             path, _ = QFileDialog.getSaveFileName(self, f"Save {fmt.upper()}", str(start), filt)
             if not path:
                 return None
@@ -231,6 +253,7 @@ def main() -> int:
     app = QApplication.instance() or QApplication(sys.argv)
     win = MainWindow()
     win.show()
-    if len(sys.argv) > 1 and Path(sys.argv[1]).exists():
-        win.open_path(sys.argv[1])
+    paths = [p for p in sys.argv[1:] if Path(p).exists()]
+    if paths:
+        win.open_paths(paths)
     return app.exec()

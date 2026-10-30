@@ -15,6 +15,7 @@ PREFERRED_LABEL_COLUMNS = ("QC Lot", "Lot Number", "ISBT DIN")
 EXCEL_EPOCH = pd.Timestamp("1899-12-30")
 CSV_SUFFIXES = {".csv", ".txt", ".tsv"}
 SOURCE_ROW = "Source row"
+SOURCE_FILE = "Source file"
 
 
 def is_csv(path: str | Path) -> bool:
@@ -193,11 +194,12 @@ def audit_rows(
     value_col: str,
     date_col: str | None = None,
     label_col: str | None = None,
+    source: str = "",
 ) -> pd.DataFrame:
     """One row per input row: raw and parsed values, and whether it is charted and why not.
 
     Columns: ``row`` (source line number), ``label``, ``raw_date``, ``raw_value``,
-    ``date``, ``value``, ``included`` and ``reason`` (blank when included).
+    ``date``, ``value``, ``file`` (``source``), ``included`` and ``reason`` (blank when included).
     """
     if value_col not in df.columns:
         raise KeyError(f"Column '{value_col}' not found")
@@ -217,6 +219,7 @@ def audit_rows(
             "raw_value": raw_value,
             "date": to_datetime(df[date_col]) if date_col else pd.Series(pd.NaT, index=df.index),
             "value": to_numeric(raw_value),
+            "file": source,
         }
     )
     reason = pd.Series("", index=df.index, dtype=object)
@@ -245,9 +248,44 @@ def prepare_series(
     return included_series(audit_rows(df, value_col, date_col, label_col), by_date=date_col is not None)
 
 
+def audit_files(
+    tables: list[tuple[str, pd.DataFrame]],
+    value_col: str,
+    date_col: str | None = None,
+    label_col: str | None = None,
+) -> pd.DataFrame:
+    """:func:`audit_rows` for several ``(file name, frame)`` pairs with the same layout, concatenated in order."""
+    parts = []
+    for name, df in tables:
+        try:
+            parts.append(audit_rows(df, value_col, date_col, label_col, source=name))
+        except KeyError as exc:
+            raise KeyError(f"{exc.args[0]} in {name}") from None
+    return pd.concat(parts, ignore_index=True)
+
+
+def common_columns(lists: list[list[str]]) -> list[str]:
+    """Names present in every list, in the first list's order."""
+    if not lists:
+        return []
+    rest = [set(names) for names in lists[1:]]
+    return [n for n in lists[0] if all(n in s for s in rest)]
+
+
+def pooled_numeric_columns(frames: list[pd.DataFrame]) -> list[str]:
+    """:func:`numeric_columns` judged over all files' rows together, limited to columns every file has.
+
+    Pooling first means a short file with a junk cell or two doesn't hide a column."""
+    common = common_columns([list(df.columns) for df in frames])
+    if not common:
+        return []
+    return numeric_columns(pd.concat([df[common] for df in frames], ignore_index=True))
+
+
 def included_series(audit: pd.DataFrame, by_date: bool) -> tuple[pd.DataFrame, int]:
     """Split an :func:`audit_rows` frame into the charted series and the excluded count."""
-    out = audit.loc[audit["included"], ["date", "label", "value", "row"]]
+    cols = ["date", "label", "value", "row"] + (["file"] if "file" in audit else [])
+    out = audit.loc[audit["included"], cols]
     if by_date:
         out = out.sort_values("date", kind="stable")
     return out.reset_index(drop=True), int((~audit["included"]).sum())

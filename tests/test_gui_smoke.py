@@ -84,3 +84,14 @@ def test_no_numeric_columns(win, tmp_path):
     assert win.open_path(p)
     assert win.generate() is False
     assert "no numeric columns" in win.errors[-1]
+
+
+def test_multiple_files(win, xlsx_split, tmp_path):
+    assert win.open_paths(xlsx_split)
+    assert win.file_label.text().startswith("2 files: part1.xlsx")
+    win.column_box.setCurrentText("QC3 CD34/Unit")
+    assert win.generate()
+    assert "files=2" in win.stats_label.text() and "n=4" in win.stats_label.text()
+    for fmt in ("png", "html", "xlsx"):
+        assert win.save(fmt, "", path=str(tmp_path / f"pooled_{fmt}")) is not None
+    assert win.errors == []

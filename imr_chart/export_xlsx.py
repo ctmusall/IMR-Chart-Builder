@@ -64,6 +64,10 @@ def _source_rows(data: pd.DataFrame, n: int) -> np.ndarray:
     return data["row"].to_numpy() if "row" in data else np.arange(1, n + 1)
 
 
+def _source_files(frame: pd.DataFrame, n: int) -> np.ndarray:
+    return frame["file"].to_numpy() if "file" in frame else np.full(n, "")
+
+
 def points_frame(data: pd.DataFrame, result: ImrResult) -> pd.DataFrame:
     return pd.DataFrame(
         {
@@ -76,6 +80,7 @@ def points_frame(data: pd.DataFrame, result: ImrResult) -> pd.DataFrame:
             "Below LSL": result.below_lsl,
             "MR above UCL": result.mr_above_ucl,
             "Source row": _source_rows(data, result.n),
+            "Source file": _source_files(data, result.n),
         }
     )
 
@@ -97,6 +102,7 @@ def audit_frame(audit: pd.DataFrame | None, data: pd.DataFrame, result: ImrResul
             "Parsed value": audit["value"].to_numpy(),
             "Included": np.where(audit["included"], "Yes", "No"),
             "Reason excluded": audit["reason"].to_numpy(),
+            "Source file": _source_files(audit, len(audit)),
         }
     )
 
@@ -125,7 +131,7 @@ def _write_recompute(ws, n: int, n_audit: int, cells: dict[str, str], has_lsl: b
     headers = ["Point", "Value (Data)", "Value in source row", "Value matches source", "Moving range (Excel)",
                "MR matches Data", "Above UCL", "Below LCL", "Below LSL", "MR above UCL", "Flags match Data"]
     ws.append(headers)
-    aud = f"'Input audit'!$A$2:$A${n_audit + 1}"
+    key = f"'Input audit'!$J$2:$J${n_audit + 1}"
     raw = f"'Input audit'!$D$2:$D${n_audit + 1}"
     for i in range(1, n + 1):
         r = i + 1
@@ -134,7 +140,8 @@ def _write_recompute(ws, n: int, n_audit: int, cells: dict[str, str], has_lsl: b
         ws.append([
             i,
             f"=Data!C{r}",
-            f"=INDEX({raw},MATCH(Data!I{r},{aud},0))",
+            # Source file + row identifies the input row, even when several files share row numbers.
+            f'=INDEX({raw},MATCH(Data!J{r}&"|"&Data!I{r},{key},0))',
             # Text cells ("50%", "1,000") are parsed the way the loader does, independent of locale.
             f'=IF(ISNUMBER({src}),{_same(src, f"B{r}")},'
             f'IFERROR({_same(parsed, f"B{r}")},FALSE))',
@@ -147,6 +154,13 @@ def _write_recompute(ws, n: int, n_audit: int, cells: dict[str, str], has_lsl: b
             f"=AND(G{r}=Data!E{r},H{r}=Data!F{r},I{r}=Data!G{r},J{r}=Data!H{r})",
         ])
     _style(ws)
+
+
+def _write_lookup_keys(ws, n_audit: int):
+    """Input audit column J: 'file|row', the key Recompute uses to find each charted value's source row."""
+    ws["J1"] = "Lookup key"
+    for r in range(2, n_audit + 2):
+        ws[f"J{r}"] = f'=I{r}&"|"&A{r}'
 
 
 def _write_verification(ws, result: ImrResult, excluded: int, n_audit: int) -> dict[str, str]:
@@ -162,7 +176,8 @@ def _write_verification(ws, result: ImrResult, excluded: int, n_audit: int) -> d
                 "Column B is what the program calculated and drew on the chart. A check passes when they agree "
                 f"to within a relative {TOLERANCE}.")
     ws["A3"] = ("If column C or the overall result is blank, click 'Enable Editing' so Excel can calculate. "
-                "Each value in Data can be traced to its row in the source file through 'Source row'.")
+                "Each value in Data can be traced to its row in the source file through 'Source file' and "
+                "'Source row'.")
     for c in ("A2", "A3"):
         ws[c].font = NOTE_FONT
 
@@ -277,6 +292,7 @@ def save_xlsx(
         _write_recompute(xw.book.create_sheet("Recompute"), result.n, len(audit_sheet), cells,
                          result.lsl is not None)
         audit_sheet.to_excel(xw, sheet_name="Input audit", index=False)
+        _write_lookup_keys(xw.sheets["Input audit"], len(audit_sheet))
         flagged.to_excel(xw, sheet_name="Out of limits", index=False)
         _style(xw.sheets["Summary stats"])
         _style(xw.sheets["Data"], flag_cols=[5, 6, 7, 8])

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "imr-chart"
-version = "1.1.0"
+version = "1.2.0"
 description = "Individual & Moving Range (I-MR) control chart generator for Excel/CSV QC data"
 requires-python = ">=3.10"
 dependencies = [

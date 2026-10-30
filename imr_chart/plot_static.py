@@ -72,6 +72,7 @@ def build_figure(
     percent: bool | None = None,
     figsize=(11, 8.5),
     recent_days: int = DEFAULT_RECENT_DAYS,
+    sources: int = 1,
 ) -> Figure:
     """Build the two-panel I-MR figure. ``data`` must have ``date`` and ``value``."""
     if percent is None:
@@ -166,6 +167,8 @@ def build_figure(
             f"   |   Beyond limits: {int(flagged.sum())} individual, {int(result.mr_above_ucl.sum())} MR")
     if result.lsl is not None:
         note += f",  {int(result.below_lsl.sum())} below LSL"
+    if sources > 1:
+        note += f"   |   Data from {sources} files"
     if recent is not None:
         note += f"   |   Highlighted: last {recent_days} days (from {pd.Timestamp(x[recent].min()):%m/%d/%Y})"
     if excluded:

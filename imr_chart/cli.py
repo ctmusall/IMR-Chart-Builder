@@ -1,4 +1,4 @@
-"""Command-line interface: ``imr-chart FILE --column COL [--lsl 2e7] ...``."""
+"""Command-line interface: ``imr-chart FILE [FILE ...] --column COL [--lsl 2e7] ...``."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ import sys
 
 from . import __version__, loader
 from .plot_static import DEFAULT_RECENT_DAYS
-from .report import FORMATS, build_job
+from .report import FORMATS, build_multi_job
 from .stats import parse_limit
 
 
@@ -16,8 +16,11 @@ def build_parser() -> argparse.ArgumentParser:
         prog="imr-chart",
         description="Generate Individual & Moving Range (I-MR) control charts from Excel or CSV files.",
     )
-    p.add_argument("file", help="Input .xlsx/.xlsm/.xls or .csv file")
-    p.add_argument("--sheet", help="Worksheet name (default: 'Summary' if present, else the first data sheet)")
+    p.add_argument("files", nargs="+", metavar="FILE",
+                   help="Input .xlsx/.xlsm/.xls or .csv file; give several files with the same layout "
+                        "to chart all their rows together")
+    p.add_argument("--sheet", help="Worksheet name, the same in every file "
+                                   "(default: 'Summary' if present, else the first data sheet)")
     p.add_argument("-c", "--column", action="append", dest="columns", metavar="COLUMN",
                    help="Numeric column to chart; repeat for several charts")
     p.add_argument("--date-column", help="Date column for the x-axis (default: 'Date Processed' if present)")
@@ -36,16 +39,26 @@ def build_parser() -> argparse.ArgumentParser:
     return p
 
 
+def _load(path: str, sheet: str | None):
+    """Load one input; errors name the file when several are given."""
+    try:
+        return loader.load_table(path, sheet)
+    except ValueError as exc:
+        raise ValueError(f"{path}: {exc}") from None
+
+
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
-        df = loader.load_table(args.file, args.sheet)
+        tables = [(path, _load(path, args.sheet)) for path in args.files]
+        frames = [df for _, df in tables]
 
         if args.list_columns:
-            print("Sheets:", ", ".join(loader.list_sheets(args.file)))
-            print("Date columns:", ", ".join(loader.date_columns(df)) or "(none)")
+            print("Sheets:", ", ".join(loader.common_columns([loader.list_sheets(f) for f in args.files])))
+            print("Date columns:", ", ".join(loader.common_columns([loader.date_columns(df) for df in frames]))
+                  or "(none)")
             print("Numeric columns:")
-            for c in loader.numeric_columns(df):
+            for c in loader.pooled_numeric_columns(frames):
                 print(f"  {c}")
             return 0
 
@@ -69,14 +82,20 @@ def main(argv: list[str] | None = None) -> int:
         if len(lsls) <= 1:
             lsls = (lsls or [None]) * len(args.columns)
 
-        sheet = None if loader.is_csv(args.file) else (args.sheet or loader.list_sheets(args.file)[0])
-        date_col = None if args.no_date else (args.date_column or loader.pick_date_column(df))
+        sheets = sorted({loader.list_sheets(f)[0] if args.sheet is None else args.sheet
+                         for f in args.files if not loader.is_csv(f)})
+        sheet = ", ".join(sheets) or None
+        date_col = None if args.no_date else (args.date_column or loader.pick_date_column(frames[0]))
         for column, lsl in zip(args.columns, lsls):
-            job = build_job(df, args.file, column, date_col, lsl=lsl, k=args.sigma, label_column=args.label_column,
-                            recent_days=args.recent_days, sheet=sheet)
+            job = build_multi_job(tables, column, date_col, lsl=lsl, k=args.sigma, label_column=args.label_column,
+                                  recent_days=args.recent_days, sheet=sheet)
             r = job.result
-            print(f"{column}: n={r.n} excluded={job.excluded} mean={r.mean:.6g} "
+            files = f"files={len(job.sources)} " if len(job.sources) > 1 else ""
+            print(f"{column}: {files}n={r.n} excluded={job.excluded} mean={r.mean:.6g} "
                   f"UCL={r.ucl:.6g} LCL={r.lcl:.6g} MR-UCL={r.mr_ucl:.6g}")
+            if job.duplicates:
+                print(f"  warning: {job.duplicates} points have the same lot, date and value in more than one file "
+                      "(overlapping exports?); all are charted", file=sys.stderr)
             for path in job.save_all(args.out, formats):
                 print(f"  wrote {path}")
         return 0

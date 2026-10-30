@@ -34,6 +34,7 @@ def build_html_figure(
     excluded: int = 0,
     percent: bool | None = None,
     recent_days: int = DEFAULT_RECENT_DAYS,
+    sources: int = 1,
 ) -> go.Figure:
     if percent is None:
         percent = looks_like_fraction(result.values)
@@ -44,6 +45,10 @@ def build_html_figure(
     fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.04, row_heights=[0.6, 0.4])
     vfmt = ".1%" if percent else ".4~s"
     date_part = "%{x|%m/%d/%Y}" if has_dates else "Obs %{x}"
+    custom = [labels]
+    if sources > 1 and "file" in data:
+        custom.append(data["file"])
+        date_part += "<br>%{customdata[1]}"
     mr = result.moving_ranges
     recent = recent_mask(data, recent_days)
     if recent is not None and not recent.any():
@@ -57,7 +62,7 @@ def build_html_figure(
         go.Scatter(
             x=x, y=result.values, mode="lines+markers", name=column,
             line={"color": "#9a9a9a", "width": 1}, marker={"size": 6, "color": colors(result.above_ucl | result.below_lcl)},
-            customdata=np.column_stack([labels]),
+            customdata=np.column_stack(custom),
             hovertemplate=f"<b>%{{customdata[0]}}</b><br>{date_part}<br>Value: %{{y:{vfmt}}}<extra></extra>",
         ),
         row=1, col=1,
@@ -66,7 +71,7 @@ def build_html_figure(
         go.Scatter(
             x=x, y=mr, mode="lines+markers", name="Moving Range",
             line={"color": "#9a9a9a", "width": 1}, marker={"size": 6, "color": colors(result.mr_above_ucl)},
-            customdata=np.column_stack([labels]),
+            customdata=np.column_stack(custom),
             hovertemplate=f"<b>%{{customdata[0]}}</b><br>{date_part}<br>MR: %{{y:{vfmt}}}<extra></extra>",
         ),
         row=2, col=1,
@@ -107,6 +112,8 @@ def build_html_figure(
     subtitle = f"n={result.n}, limits = mean ± {result.k:g}σ (σ = MR̄/1.128)"
     if recent is not None:
         subtitle += f" · highlighted: last {recent_days} days (from {start:%m/%d/%Y})"
+    if sources > 1:
+        subtitle += f" · data from {sources} files"
     if excluded:
         subtitle += f" · {excluded} rows excluded"
     fig.update_layout(
