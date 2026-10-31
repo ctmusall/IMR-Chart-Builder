@@ -10,7 +10,7 @@ import matplotlib
 matplotlib.use("QtAgg")
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT  # noqa: E402
 from PySide6.QtCore import Qt  # noqa: E402
-from PySide6.QtGui import QColor  # noqa: E402
+from PySide6.QtGui import QColor, QIcon  # noqa: E402
 from PySide6.QtWidgets import (  # noqa: E402
     QAbstractItemView,
     QApplication,
@@ -576,8 +576,14 @@ class MainWindow(QMainWindow):
         return saved
 
 
+ICON = Path(__file__).resolve().parent / "assets" / "icon.png"
+
+
 def main() -> int:
     app = QApplication.instance() or QApplication(sys.argv)
+    app.setDesktopFileName("imr-chart")
+    if ICON.exists():
+        app.setWindowIcon(QIcon(str(ICON)))
     win = MainWindow()
     win.show()
     paths = [p for p in sys.argv[1:] if Path(p).exists()]

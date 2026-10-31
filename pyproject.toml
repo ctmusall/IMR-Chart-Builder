@@ -25,6 +25,9 @@ imr-chart = "imr_chart.__main__:main"
 [tool.setuptools]
 packages = ["imr_chart"]
 
+[tool.setuptools.package-data]
+imr_chart = ["assets/*"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"

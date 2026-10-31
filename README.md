@@ -114,4 +114,6 @@ PyInstaller cannot cross-compile, so build each OS's executable on that OS.
 | **Windows** | Install Python 3.10+ from python.org, then run `powershell -ExecutionPolicy Bypass -File build.ps1` | `dist\imr-chart.exe` and `dist\imr-chart-cli.exe` |
 | **GitHub Actions** | Push to `main`. `.github/workflows/build.yml` tests and builds both platforms, then publishes them as a public release named after the version in `imr_chart/__init__.py` | The [Releases page](https://github.com/ctmusall/IMR-Chart-Builder/releases/latest) |
 
+The app icon (`imr_chart/assets/icon.png` and `icon.ico`) is drawn by `scripts/make_icon.py`; rerun it after changing the design.
+
 Both build scripts run the full test suite before building. `sheet.xlsx` holds real QC data, so keep it out of public repositories. The tests that use it skip automatically when it's absent.

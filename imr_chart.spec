@@ -6,6 +6,7 @@
 from PyInstaller.utils.hooks import collect_data_files
 
 datas = collect_data_files("plotly", includes=["package_data/**/*", "validators/**/*"])
+ICON_PNG = ("imr_chart/assets/icon.png", "imr_chart/assets")  # window icon, read at runtime
 
 # Qt modules the app never uses; excluding them keeps the executable smaller.
 excludes = [
@@ -25,7 +26,7 @@ def make_analysis(script, gui):
     return Analysis(
         [script],
         pathex=["."],
-        datas=datas,
+        datas=datas + ([ICON_PNG] if gui else []),
         hiddenimports=hidden,
         # The console build never imports Qt; leaving it out saves ~100 MB.
         excludes=excludes if gui else excludes + ["PySide6", "shiboken6"],
@@ -39,6 +40,7 @@ def make_exe(a, name, console):
         pyz, a.scripts, a.binaries, a.datas, [],
         name=name,
         console=console,
+        icon="imr_chart/assets/icon.ico",
         upx=False,
         strip=False,
         debug=False,

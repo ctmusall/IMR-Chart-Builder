@@ -180,3 +180,12 @@ def test_rule_sheet_limits_columns(win, xlsx_with_header_tab):
     win.panels[0].sheet_box.setCurrentText("Query")  # Summary no longer loaded: its rules keep their sheet
     assert sheet.currentText() == "Summary" and ed.columns == ["x", "y"]
     assert ed.rules()[0].sheet == "Summary"
+
+
+def test_app_icon_is_packaged():
+    from PySide6.QtGui import QIcon
+
+    from imr_chart.gui import ICON
+
+    assert ICON.exists() and ICON.with_suffix(".ico").exists()
+    assert not QIcon(str(ICON)).isNull()
