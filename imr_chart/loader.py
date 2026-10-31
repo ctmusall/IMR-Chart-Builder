@@ -196,13 +196,15 @@ def audit_rows(
     label_col: str | None = None,
     source: str = "",
     rules: list | None = None,
+    sheet: str | None = None,
 ) -> pd.DataFrame:
     """One row per input row: raw and parsed values, and whether it is charted and why not.
 
     Columns: ``row`` (source line number), ``label``, ``raw_date``, ``raw_value``,
     ``date``, ``value``, ``file`` (``source``), ``included`` and ``reason`` (blank when included).
     With highlight ``rules`` (:mod:`imr_chart.rules`), also ``rule`` and ``highlight``: the first
-    matching rule's label and color, blank when no rule matches.
+    matching rule's label and color, blank when no rule matches. ``sheet`` names the sheet
+    ``df`` came from, so rules for other sheets are skipped.
     """
     if value_col not in df.columns:
         raise KeyError(f"Column '{value_col}' not found")
@@ -236,7 +238,7 @@ def audit_rows(
     if rules:
         from .rules import apply  # rules imports this module
 
-        out["rule"], out["highlight"] = apply(rules, df)
+        out["rule"], out["highlight"] = apply(rules, df, sheet)
     return out.reset_index(drop=True)
 
 
@@ -264,10 +266,19 @@ def audit_files(
     rules: list | None = None,
 ) -> pd.DataFrame:
     """:func:`audit_rows` for several ``(file name, frame)`` pairs with the same layout, concatenated in order."""
+    return audit_sources([(name, df, value_col, date_col, label_col, None) for name, df in tables], rules)
+
+
+def audit_sources(
+    sources: list[tuple[str, pd.DataFrame, str, str | None, str | None, str | None]],
+    rules: list | None = None,
+) -> pd.DataFrame:
+    """:func:`audit_rows` for several ``(file name, frame, value column, date column, label column, sheet)``
+    sources, each with its own columns, concatenated in order."""
     parts = []
-    for name, df in tables:
+    for name, df, value_col, date_col, label_col, sheet in sources:
         try:
-            parts.append(audit_rows(df, value_col, date_col, label_col, source=name, rules=rules))
+            parts.append(audit_rows(df, value_col, date_col, label_col, source=name, rules=rules, sheet=sheet))
         except KeyError as exc:
             raise KeyError(f"{exc.args[0]} in {name}") from None
     return pd.concat(parts, ignore_index=True)

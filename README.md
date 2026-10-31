@@ -7,7 +7,7 @@ Generates **Individual & Moving Range (I-MR) control charts** from Excel or CSV 
 - a moving-range chart underneath, plotted against Date Processed
 - the **most recent 30 days** (counted back from the latest date in the file) shaded and drawn in orange, so new results stand out. Control limits still use all the data.
 
-**Several files at once.** Give it one file or many exports with the same layout (same sheet name and columns), and every row from all of them goes on one chart. Points are sorted by date across files; same-date ties keep the order the files were given. Control limits use all the pooled points. In the HTML, hovering a point shows which file it came from. If the same lot, date and value turns up in more than one file (overlapping exports), you get a warning. Those points are still charted.
+**Several files at once.** Give it one file or many, and every row from all of them goes on one chart. In the GUI each workbook gets its own section to choose its sheet, value column and date column, so the files don't need the same layout; LSL, sigma, recent-highlight and highlight rules apply to all of them. Use a date column in every workbook, or row order in all of them. Points are sorted by date across files; same-date ties keep the order the files were given. Control limits use all the pooled points. In the HTML, hovering a point shows which file it came from. If the same lot, date and value turns up in more than one file (overlapping exports), you get a warning. Those points are still charted.
 
 Outputs: **PNG** image, **interactive HTML** (hover a point to see its lot number, date, and value), and an **Excel stats** workbook. The workbook proves that the chart's numbers match the input (see below).
 
@@ -56,7 +56,7 @@ The test suite checks that the Verification sheet evaluates to ALL CHECKS PASS. 
 
 **GUI:**
 1. Run `imr-chart.exe` (Windows) or `./imr-chart` (Linux). You can also drag one or more files onto the exe.
-2. Open a file, or select several files with the same layout (Ctrl/Shift-click in the Open dialog), and choose the sheet, column, and LSL. Columns and sheets that all the files share are listed.
+2. Open a file, or select several (Ctrl/Shift-click in the Open dialog). Each file gets a row where you choose its sheet, value column and date column. Picking a value or date column in the first file picks the same column in the other files that have it; you can then change any file's choice. Set the LSL, which applies to all files.
 3. Click **Generate chart**, then **Save PNG… / Save HTML… / Save Excel stats…**.
 
 **Command line** (`imr-chart-cli`):
@@ -77,7 +77,7 @@ imr-chart-cli jan.xlsx feb.xlsx mar.xlsx -c "QC3 CD34/Unit" --lsl 2e7   # one ch
 
 ### Highlight rules
 
-A highlight rule colors every point whose source row matches a condition. A rule can test any column of the row, not only the charted one, e.g. `Notes contains retest` or `QC3 CD34 Viability < 90%`. Rules are checked top to bottom and the **first matching rule** decides a point's color. Points beyond the control limits keep their red ring. The chart legend shows how many points each rule matched, and the Excel **Data** sheet has a **Highlight rule** column.
+A highlight rule colors every point whose source row matches a condition. A rule can test any column of the row, not only the charted one, e.g. `Notes contains retest` or `QC3 CD34 Viability < 90%`. A rule can also name a **sheet**: it then tests only rows from workbooks charted from a sheet of that name. A rule for **(any sheet)** tests every file that has its column. Rules are checked top to bottom and the **first matching rule** decides a point's color. Points beyond the control limits keep their red ring. The chart legend shows how many points each rule matched, and the Excel **Data** sheet has a **Highlight rule** column.
 
 | Operator | Matches when the cell… |
 |---|---|
@@ -89,10 +89,11 @@ In the GUI, edit the **Highlight rules** table (Add / Remove / Up / Down, click 
 ```json
 {"rules": [
   {"name": "Retest", "column": "Notes", "op": "contains", "value": "retest", "color": "#ff00ff"},
-  {"name": "", "column": "QC3 CD34 Viability", "op": "<", "value": "90%", "color": "#2ca02c", "enabled": true}
+  {"name": "", "column": "QC3 CD34 Viability", "op": "<", "value": "90%", "color": "#2ca02c", "enabled": true,
+   "sheet": "Summary"}
 ]}
 ```
-A blank `name` shows the condition itself in the legend.
+A blank `name` shows the condition itself in the legend. Leave out `sheet` (or use `""`) to test rows from any sheet.
 
 ## Development
 

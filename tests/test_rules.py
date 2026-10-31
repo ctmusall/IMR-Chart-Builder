@@ -2,7 +2,7 @@ import pandas as pd
 import pytest
 
 from imr_chart import loader
-from imr_chart.rules import Rule, apply, evaluate, load_rules, save_rules
+from imr_chart.rules import Rule, apply, check_columns, evaluate, load_rules, save_rules
 
 # Mirrors conftest ROWS: Excel-serial dates, a blank and a junk value, mixed-case text.
 DF = pd.DataFrame({
@@ -103,3 +103,32 @@ def test_audit_carries_rules(xlsx_with_header_tab):
     assert list(data["label"]) == ["L1", "L2", "L3", "L6"]
     assert list(data["rule"]) == ["note b", "QC3 CD34 Viability > '85%'", "QC3 CD34 Viability > '85%'", ""]
     assert list(data["highlight"]) == ["#008000", "#ffa500", "#ffa500", ""]
+
+
+def test_sheet_scoped_rules():
+    scoped = Rule("", "Notes", "contains", "retest", sheet="Summary")
+    assert scoped.describe() == "Summary › Notes contains 'retest'"
+    assert list(evaluate([scoped], DF, "Summary")) == [0, -1, 0, -1, -1, -1]
+    assert list(evaluate([scoped], DF, "Other")) == [-1] * 6
+    assert list(evaluate([scoped], DF)) == [-1] * 6  # unknown sheet: a scoped rule never applies
+    labels, _ = apply([Rule("", "Missing", "is blank")], DF, "Other")  # any-sheet rule, column elsewhere
+    assert set(labels) == {""}
+
+
+def test_check_columns():
+    tables = [("Summary", list(DF.columns)), ("Data", ["QC Lot"])]
+    check_columns([Rule("", "Notes", "is blank"), Rule("", "Gone", "is blank", sheet="Unloaded")], tables)
+    with pytest.raises(KeyError, match="'Notes' not found in sheet 'Data'"):
+        check_columns([Rule("", "Notes", "is blank", sheet="Data")], tables)
+    with pytest.raises(KeyError, match="'Gone' not found"):
+        check_columns([Rule("", "Gone", "is blank")], tables)
+    check_columns([Rule("", "Gone", "is blank", enabled=False)], tables)
+
+
+def test_rules_file_sheet_field(tmp_path):
+    old = tmp_path / "old.json"
+    old.write_text('{"rules": [{"column": "Notes", "op": "is blank"}]}')
+    assert load_rules(old)[0].sheet == ""
+    path = save_rules([Rule("", "Notes", "is blank", sheet="Summary")], tmp_path / "new.json")
+    assert '"sheet": "Summary"' in path.read_text()
+    assert load_rules(path)[0].sheet == "Summary"

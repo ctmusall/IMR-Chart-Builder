@@ -126,3 +126,54 @@ def test_pooled_numeric_columns(xlsx_split):
     assert COL in loader.pooled_numeric_columns(frames)
     assert "Notes" not in loader.pooled_numeric_columns(frames)
     assert loader.pooled_numeric_columns([]) == []
+
+
+def mixed_sources(xlsx_with_header_tab, xlsx_inline_header, date=DATE):
+    from imr_chart.report import SourceTable
+
+    return [SourceTable(xlsx_with_header_tab, loader.load_table(xlsx_with_header_tab, "Summary"), COL, date, "Summary"),
+            SourceTable(xlsx_inline_header, loader.load_table(xlsx_inline_header, "Data"),
+                        "QC3 CD34 Viability", date, "Data")]
+
+
+def test_sources_with_own_sheet_and_column(xlsx_with_header_tab, xlsx_inline_header, tmp_path):
+    from imr_chart.report import build_sources_job
+    from imr_chart.rules import Rule
+
+    rule = Rule("", "Notes", "=", "b", sheet="Data")
+    job = build_sources_job(mixed_sources(xlsx_with_header_tab, xlsx_inline_header), rules=[rule])
+    assert job.result.n == 4 + 6 and job.excluded == 2
+    assert job.column == f"{COL} / QC3 CD34 Viability" and job.sheet == "Summary / Data"
+    assert list(job.data.loc[job.data["highlight"] != "", "file"]) == ["inline.xlsx"]
+    prov = job.provenance()
+    assert prov["Source 1 sheet"] == "Summary" and prov["Source 2 column"] == "QC3 CD34 Viability"
+    assert prov["Source 2 date column"] == DATE
+    job.save_png(tmp_path / "mixed.png")
+
+
+def test_sources_mixed_date_and_row_order(xlsx_with_header_tab, xlsx_inline_header):
+    from imr_chart.report import build_sources_job
+
+    sources = mixed_sources(xlsx_with_header_tab, xlsx_inline_header)
+    sources[1].date_column = None
+    with pytest.raises(ValueError, match="date column for every workbook"):
+        build_sources_job(sources)
+    assert build_sources_job(mixed_sources(xlsx_with_header_tab, xlsx_inline_header, None)).date_column is None
+
+
+def test_sources_workbook_passes_verification(xlsx_with_header_tab, xlsx_inline_header, tmp_path):
+    pytest.importorskip("formulas")
+    from imr_chart.report import build_sources_job
+
+    job = build_sources_job(mixed_sources(xlsx_with_header_tab, xlsx_inline_header), lsl=0.5)
+    values = evaluate(job.save_xlsx(tmp_path / "mixed.xlsx"))
+    assert set(checks(values).values()) == {"PASS"}
+
+
+def test_cli_rule_for_one_sheet(xlsx_with_header_tab, tmp_path, capsys):
+    rules = tmp_path / "r.json"
+    rules.write_text('{"rules": [{"column": "Notes", "op": "is not blank", "sheet": "Elsewhere"},'
+                     ' {"column": "Notes", "op": "=", "value": "b", "sheet": "Summary"}]}')
+    assert main([str(xlsx_with_header_tab), "-c", COL, "--rules", str(rules), "--formats", "png",
+                 "-o", str(tmp_path / "out")]) == 0
+    assert "highlighted=1" in capsys.readouterr().out

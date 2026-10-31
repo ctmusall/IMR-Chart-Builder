@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import argparse
 import sys
+from pathlib import Path
 
 from . import __version__, loader, rules
 from .plot_static import DEFAULT_RECENT_DAYS
-from .report import FORMATS, build_multi_job
+from .report import FORMATS, SourceTable, build_sources_job
 from .stats import parse_limit
 
 
@@ -86,13 +87,16 @@ def main(argv: list[str] | None = None) -> int:
             lsls = (lsls or [None]) * len(args.columns)
 
         highlight_rules = rules.load_rules(args.rules) if args.rules else []
-        sheets = sorted({loader.list_sheets(f)[0] if args.sheet is None else args.sheet
-                         for f in args.files if not loader.is_csv(f)})
-        sheet = ", ".join(sheets) or None
+        # Each file's sheet name (a CSV's is its file name), so rules for one sheet skip the others.
+        sheets = [Path(f).stem if loader.is_csv(f) else (args.sheet or loader.list_sheets(f)[0])
+                  for f in args.files]
         date_col = None if args.no_date else (args.date_column or loader.pick_date_column(frames[0]))
+        label_col = args.label_column or loader.pick_label_column(frames[0])
         for column, lsl in zip(args.columns, lsls):
-            job = build_multi_job(tables, column, date_col, lsl=lsl, k=args.sigma, label_column=args.label_column,
-                                  recent_days=args.recent_days, sheet=sheet, rules=highlight_rules)
+            sources = [SourceTable(path, df, column, date_col, sheet, label_col)
+                       for (path, df), sheet in zip(tables, sheets)]
+            job = build_sources_job(sources, lsl=lsl, k=args.sigma, recent_days=args.recent_days,
+                                    rules=highlight_rules)
             r = job.result
             files = f"files={len(job.sources)} " if len(job.sources) > 1 else ""
             print(f"{column}: {files}n={r.n} excluded={job.excluded} mean={r.mean:.6g} "

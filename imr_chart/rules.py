@@ -3,6 +3,7 @@
 A rule tests one column of the source row (any column, not only the charted
 one), e.g. ``Notes contains "retest"`` or ``QC3 CD34 Viability < 50%``. Rules
 form an ordered list; the first enabled rule a row matches decides its color.
+A rule may name a sheet; it then tests only rows read from a sheet of that name.
 """
 
 from __future__ import annotations
@@ -41,9 +42,11 @@ class Rule:
     value: str = ""
     color: str = DEFAULT_COLOR
     enabled: bool = True
+    sheet: str = ""  # "" = rows from any sheet
 
     def __post_init__(self):
         self.value = "" if self.value is None else str(self.value)
+        self.sheet = "" if self.sheet is None else str(self.sheet).strip()
         if self.op not in OPERATORS:
             raise ValueError(f"Rule '{self.label}': unknown operator '{self.op}' (use one of {', '.join(OPERATORS)})")
         if not self.column:
@@ -57,9 +60,14 @@ class Rule:
         return self.name or self.describe()
 
     def describe(self) -> str:
+        where = f"{self.sheet} › " if self.sheet else ""
         if self.op in NO_VALUE_OPERATORS:
-            return f"{self.column} {self.op}"
-        return f"{self.column} {self.op} '{self.value}'"
+            return f"{where}{self.column} {self.op}"
+        return f"{where}{self.column} {self.op} '{self.value}'"
+
+    def applies_to(self, sheet: str | None) -> bool:
+        """Whether this rule tests rows read from ``sheet``."""
+        return not self.sheet or self.sheet == sheet
 
     def matches(self, df: pd.DataFrame) -> pd.Series:
         """Boolean per row of ``df``; cells that can't be compared never match."""
@@ -102,23 +110,42 @@ class Rule:
         return cmp(text, self.value.strip().casefold())
 
 
-def evaluate(rules: list[Rule] | None, df: pd.DataFrame) -> pd.Series:
-    """Index into ``rules`` of the first enabled rule each row matches; -1 for none."""
+def evaluate(rules: list[Rule] | None, df: pd.DataFrame, sheet: str | None = None) -> pd.Series:
+    """Index into ``rules`` of the first enabled rule each row matches; -1 for none.
+
+    ``sheet`` names the sheet ``df`` was read from: rules for another sheet are skipped. So is
+    an any-sheet rule whose column ``df`` lacks, when other sheets are involved (see
+    :func:`check_columns`); without ``sheet`` a missing column is an error."""
     out = pd.Series(-1, index=df.index, dtype=int)
     for i, rule in enumerate(rules or []):
-        if not rule.enabled:
+        if not rule.enabled or not rule.applies_to(sheet):
+            continue
+        if sheet is not None and not rule.sheet and rule.column not in df.columns:
             continue
         hit = rule.matches(df).fillna(False).to_numpy(dtype=bool)
         out[hit & (out.to_numpy() == -1)] = i
     return out
 
 
-def apply(rules: list[Rule] | None, df: pd.DataFrame) -> tuple[pd.Series, pd.Series]:
+def apply(rules: list[Rule] | None, df: pd.DataFrame, sheet: str | None = None) -> tuple[pd.Series, pd.Series]:
     """Per row of ``df``: the matching rule's label and color ("" when none)."""
-    idx = evaluate(rules, df).to_numpy()
+    idx = evaluate(rules, df, sheet).to_numpy()
     labels = np.array([""] + [r.label for r in rules or []], dtype=object)
     colors = np.array([""] + [r.color for r in rules or []], dtype=object)
     return pd.Series(labels[idx + 1], index=df.index), pd.Series(colors[idx + 1], index=df.index)
+
+
+def check_columns(rules: list[Rule] | None, tables: list[tuple[str | None, list[str]]]):
+    """Raise KeyError for an enabled rule whose column is in none of the ``(sheet, columns)`` it applies to.
+
+    A rule for a sheet that isn't loaded matches nothing and is not an error."""
+    for rule in rules or []:
+        if not rule.enabled:
+            continue
+        targets = [cols for sheet, cols in tables if rule.applies_to(sheet)]
+        if targets and not any(rule.column in cols for cols in targets):
+            where = f" in sheet '{rule.sheet}'" if rule.sheet else ""
+            raise KeyError(f"Rule '{rule.label}': column '{rule.column}' not found{where}")
 
 
 def load_rules(path: str | Path) -> list[Rule]:
