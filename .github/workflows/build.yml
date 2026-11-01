@@ -67,7 +67,7 @@ jobs:
           python -m pip install formulas openpyxl
           bash tests/golden/verify_xlsx.sh python
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: imr-chart-${{ runner.os }}
           path: |
