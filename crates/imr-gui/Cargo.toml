@@ -1,0 +1,32 @@
+[package]
+name = "imr-gui"
+description = "I-MR Chart Builder desktop app"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+
+[[bin]]
+name = "imr-chart"
+path = "src/main.rs"
+
+[dependencies]
+imr-core.workspace = true
+imr-charts.workspace = true
+imr-cli.workspace = true
+eframe.workspace = true
+egui.workspace = true
+egui_plot.workspace = true
+epaint_default_fonts = { workspace = true, features = ["monochrome_emoji_fonts"] }
+image.workspace = true
+rfd.workspace = true
+
+[dev-dependencies]
+egui_kittest.workspace = true
+tempfile.workspace = true
+
+[build-dependencies]
+winresource.workspace = true
+
+[lints]
+workspace = true

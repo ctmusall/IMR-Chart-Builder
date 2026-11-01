@@ -54,6 +54,8 @@ jobs:
           $cli --version
           $cli tests/golden/smoke/smoke.csv -c Value --lsl 2e7 -o smoke_out
           test -s smoke_out/IMR_Value.png && test -s smoke_out/IMR_Value.html && test -s smoke_out/IMR_Value.xlsx
+          # The app runs the command line when given options.
+          target/release/imr-chart tests/golden/smoke/smoke.csv -c Value --formats xlsx -o smoke_out/app | grep -q "n=4"
 
       - uses: actions/setup-python@v5
         if: runner.os == 'Linux'
@@ -70,6 +72,7 @@ jobs:
         with:
           name: imr-chart-rust-${{ runner.os }}
           path: |
+            target/release/imr-chart${{ runner.os == 'Windows' && '.exe' || '' }}
             target/release/imr-chart-cli${{ runner.os == 'Windows' && '.exe' || '' }}
             licenses/
 
@@ -108,6 +111,8 @@ jobs:
           printf 'QC Lot,Date Processed,Value\nA,2024-01-01,5e7\nB,2024-01-02,7e7\nC,2024-01-03,6e7\nD,2024-01-04,1e7\n' > smoke.csv
           ./dist/imr-chart-cli smoke.csv -c Value --lsl 2e7 -o smoke_out
           test -s smoke_out/IMR_Value.png && test -s smoke_out/IMR_Value.html && test -s smoke_out/IMR_Value.xlsx
+          # The app runs the command line when given options.
+          target/release/imr-chart tests/golden/smoke/smoke.csv -c Value --formats xlsx -o smoke_out/app | grep -q "n=4"
 
       - uses: actions/upload-artifact@v4
         with:

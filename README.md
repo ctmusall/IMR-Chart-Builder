@@ -127,9 +127,11 @@ The app is being ported to Rust, in the same staged way as Workbook Query: the e
 | `crates/imr-core` | The engine: loading, statistics, highlight rules, the Excel stats workbook and the interactive HTML chart (with the same plotly.js embedded) |
 | `crates/imr-charts` | The chart image: laid out as matplotlib laid it out (same panel geometry, axis limits, ticks, legend placement and DejaVu Sans font) and saved as a 200 dpi PNG |
 | `crates/imr-cli` | `imr-chart-cli`, with the same options, messages and exit codes as the Python CLI |
+| `crates/imr-gui` | `imr-chart`, the desktop app (egui). Given options, it runs the command line |
 
 ```
 cargo test --workspace                   # all tests, including parity with Python
+cargo run -p imr-gui                     # the app
 cargo run -p imr-cli -- FILE -c COLUMN   # the command line
 just ci                                  # format, lints, licenses, tests and a smoke test, as CI runs them
 just charts                              # save sample charts to target/charts/ to look at
@@ -147,4 +149,5 @@ just verify-xlsx                         # Excel formulas (Python's `formulas` p
 - Highlight rule colors accept hex codes, CSS color names, `tab:` colors, `C0`–`C9`, one-letter colors and grey levels, but not matplotlib's `xkcd:` names.
 - Dates written as text are read by a fixed list of formats (ISO, US month/day/year, day/month/year when the first number can't be a month, two-digit years, month names, `January 2024`). pandas' parser guesses more freely.
 - The chart image is drawn by resvg rather than matplotlib's Agg renderer, so anti-aliasing and text hinting differ slightly; the layout, ticks and colors match.
+- In the app, files can also be dropped onto the window (not only onto the program). The chart in the window is interactive (drag to pan, scroll to zoom both panels together, double-click to reset, hover a point for its lot, date, value and file); its legend lists rules alphabetically. Saved PNGs look as before.
 - Column widths in the workbook are set the way Excel counts them, so they come out slightly wider than openpyxl's.

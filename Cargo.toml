@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/imr-core", "crates/imr-charts", "crates/imr-cli"]
+members = ["crates/imr-core", "crates/imr-charts", "crates/imr-cli", "crates/imr-gui"]
 
 [workspace.package]
 version = "1.2.0"
@@ -19,7 +19,14 @@ calamine = { version = "0.37", features = ["chrono"] }
 chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
 clap = { version = "4", features = ["derive"] }
 csv = "1"
+eframe = { version = "0.37", default-features = false, features = ["accesskit", "clipboard", "default_fonts", "links", "wayland", "wgpu", "x11"] }
+egui = "0.37"
+egui_plot = "0.38"
+egui_kittest = { version = "0.37", features = ["wgpu", "snapshot"] }
+epaint_default_fonts = "0.37"
+image = { version = "0.25", default-features = false, features = ["png"] }
 regex = "1"
+rfd = "0.17"
 # resvg draws the chart image; it brings usvg (SVG parsing, text) and tiny-skia.
 resvg = { version = "0.45", default-features = false, features = ["text"] }
 rust_xlsxwriter = { version = "0.102", features = ["chrono"] }
@@ -29,6 +36,7 @@ sha2 = "0.10"
 tempfile = "3"
 thiserror = "2"
 ttf-parser = "0.25"
+winresource = "0.1"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"
