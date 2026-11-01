@@ -43,7 +43,7 @@ The Excel stats workbook (`.xlsx`) carries the evidence alongside the results:
 | **Input audit** | Every row of each source sheet: its file and row number in the original file, raw and parsed date and value, and whether it was charted. If it was excluded, the reason is given (blank or non-numeric value, blank or unreadable date). |
 | **Data** | Each charted point, with its **Source row** and **Source file**, so you can find it in the original file. |
 
-The test suite checks that the Verification sheet evaluates to ALL CHECKS PASS. It also checks that changing a single value makes it fail.
+CI checks that the Verification sheet evaluates to ALL CHECKS PASS. It also checks that changing a single value makes it fail.
 
 ## Input files
 
@@ -55,7 +55,7 @@ The test suite checks that the Verification sheet evaluates to ALL CHECKS PASS. 
 ## Using the app
 
 **GUI:**
-1. Run `imr-chart.exe` (Windows) or `./imr-chart` (Linux). You can also drag one or more files onto the exe.
+1. Run `imr-chart.exe` (Windows) or `./imr-chart-linux` (Linux). You can also drag one or more files onto the exe, or onto the window.
 2. Open a file, or select several (Ctrl/Shift-click in the Open dialog). Each file gets a row where you choose its sheet, value column and date column. Picking a value or date column in the first file picks the same column in the other files that have it; you can then change any file's choice. Set the LSL, which applies to all files.
 3. Click **Generate chart**, then **Save PNG… / Save HTML… / Save Excel stats…**.
 
@@ -97,57 +97,45 @@ A blank `name` shows the condition itself in the legend. Leave out `sheet` (or u
 
 ## Development
 
-```
-python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'
-QT_QPA_PLATFORM=offscreen .venv/bin/pytest --cov=imr_chart
-.venv/bin/python -m imr_chart          # GUI
-.venv/bin/python -m imr_chart FILE ... # CLI
-```
-
-## Building executables
-
-PyInstaller cannot cross-compile, so build each OS's executable on that OS.
-
-| Platform | How to build | Output |
-|---|---|---|
-| **Linux** | `./build.sh` | `dist/imr-chart` (GUI) and `dist/imr-chart-cli` |
-| **Windows** | Install Python 3.10+ from python.org, then run `powershell -ExecutionPolicy Bypass -File build.ps1` | `dist\imr-chart.exe` and `dist\imr-chart-cli.exe` |
-| **GitHub Actions** | Push to `main`. `.github/workflows/build.yml` tests and builds both platforms, then publishes them as a public release named after the version in `imr_chart/__init__.py` | The [Releases page](https://github.com/ctmusall/IMR-Chart-Builder/releases/latest) |
-
-The app icon (`imr_chart/assets/icon.png` and `icon.ico`) is drawn by `scripts/make_icon.py`; rerun it after changing the design.
-
-Both build scripts run the full test suite before building. `sheet.xlsx` holds real QC data, so keep it out of public repositories. The tests that use it skip automatically when it's absent.
-
-## Rust port (in progress)
-
-The app is being ported to Rust, in the same staged way as Workbook Query: the engine and command line first, then the chart image, then the desktop app. The Python version stays the released one until the switch-over. CI builds and tests both.
+The app is written in Rust (a Cargo workspace). Install Rust from [rustup.rs](https://rustup.rs); the toolchain version is pinned in `rust-toolchain.toml`.
 
 | Crate | What it is |
 |---|---|
-| `crates/imr-core` | The engine: loading, statistics, highlight rules, the Excel stats workbook and the interactive HTML chart (with the same plotly.js embedded) |
-| `crates/imr-charts` | The chart image: laid out as matplotlib laid it out (same panel geometry, axis limits, ticks, legend placement and DejaVu Sans font) and saved as a 200 dpi PNG |
-| `crates/imr-cli` | `imr-chart-cli`, with the same options, messages and exit codes as the Python CLI |
+| `crates/imr-core` | The engine: loading, statistics, highlight rules, the Excel stats workbook and the interactive HTML chart (with plotly.js embedded) |
+| `crates/imr-charts` | The chart image: laid out as matplotlib laid out the 1.x chart (panel geometry, axis limits, ticks, legend placement, DejaVu Sans font) and saved as a 200 dpi PNG |
+| `crates/imr-cli` | `imr-chart-cli`, the command line |
 | `crates/imr-gui` | `imr-chart`, the desktop app (egui). Given options, it runs the command line |
 
 ```
-cargo test --workspace                   # all tests, including parity with Python
 cargo run -p imr-gui                     # the app
 cargo run -p imr-cli -- FILE -c COLUMN   # the command line
+cargo test --workspace                   # all tests
 just ci                                  # format, lints, licenses, tests and a smoke test, as CI runs them
 just charts                              # save sample charts to target/charts/ to look at
-just verify-xlsx                         # Excel formulas (Python's `formulas` package) recompute Rust-written workbooks
+just verify-xlsx                         # Excel formulas (Python's `formulas` package) recompute workbooks the CLI writes
 ```
 
-**Parity tests.** `tests/golden/generate.py` runs the Python code on fixture files and records what it produced as JSON: loaded tables, parsed numbers and dates, statistics, rule matches, every chart job's audit, data and provenance, each workbook's cells, formulas, styles and column widths, the HTML page, and the command line's output. `tests/golden/generate_charts.py` records what matplotlib drew: each panel's position, limits, ticks and labels, and every line, point, band, annotation and legend entry. The Rust tests compare against all of it. The HTML matches byte for byte apart from the plot's random element id. `just golden` regenerates the fixtures while the Python code exists.
+**Parity tests.** `tests/golden/` holds what the Python version (1.x) produced on fixture files, recorded by `generate.py` and `generate_charts.py`: loaded tables, parsed numbers and dates, statistics, rule matches, every chart job's audit, data and provenance, each workbook's cells, formulas, styles and column widths, the HTML page, the command line's output, and what matplotlib drew on each chart. The Rust tests compare against all of it; the HTML matches byte for byte apart from the plot's random element id. The scripts need the Python package, which is in the git history (version 1.2.0).
 
-**Known differences from the Python version**
+## Building executables
 
-- `.xls` files work. The Python build can't read them, because `xlrd` isn't installed.
-- Charting several files that include a row with a blank lot, or several files in row order, works. Python crashes while counting points repeated across files.
+| Platform | How to build | Output |
+|---|---|---|
+| **Linux / Windows** | `cargo build --release` (or `just build`) | `target/release/imr-chart` and `imr-chart-cli` (`.exe` on Windows) |
+| **GitHub Actions** | Push to `main`. `.github/workflows/build.yml` lints, tests and builds both platforms, then publishes them as a public release named after the version in `Cargo.toml` | The [Releases page](https://github.com/ctmusall/IMR-Chart-Builder/releases/latest) |
+
+The Windows executables link the C runtime statically, so they need nothing else installed. The app icon is `assets/icon.png` and `assets/icon.ico`. `sheet.xlsx` holds real QC data, so keep it out of public repositories; the test that uses it skips when it's absent. Licences of the embedded fonts and plotly.js are in `licenses/`.
+
+## What changed in 2.0
+
+Version 2.0 is the same program rewritten in Rust: smaller, faster executables (about 32 MB for the app, 14 MB for the command line, against 131 MB and 68 MB), with the same charts, workbooks and command line. Differences from 1.x:
+
+- `.xls` files open (1.x couldn't read them: its build lacked `xlrd`).
+- Charting several files that include a row with a blank lot, or several files in row order, works (1.x crashed while counting points repeated across files).
 - The *Generated* time in the stats workbook shows the time zone as an offset (`-05:00`), not an abbreviation (`EST`).
 - In the workbook, NUMBERVALUE is saved with Excel's `_xlfn.` prefix, so Excel recognizes it without re-entering the formula.
 - Highlight rule colors accept hex codes, CSS color names, `tab:` colors, `C0`–`C9`, one-letter colors and grey levels, but not matplotlib's `xkcd:` names.
-- Dates written as text are read by a fixed list of formats (ISO, US month/day/year, day/month/year when the first number can't be a month, two-digit years, month names, `January 2024`). pandas' parser guesses more freely.
-- The chart image is drawn by resvg rather than matplotlib's Agg renderer, so anti-aliasing and text hinting differ slightly; the layout, ticks and colors match.
-- In the app, files can also be dropped onto the window (not only onto the program). The chart in the window is interactive (drag to pan, scroll to zoom both panels together, double-click to reset, hover a point for its lot, date, value and file); its legend lists rules alphabetically. Saved PNGs look as before.
-- Column widths in the workbook are set the way Excel counts them, so they come out slightly wider than openpyxl's.
+- Dates written as text are read by a fixed list of formats (ISO, US month/day/year, day/month/year when the first number can't be a month, two-digit years, month names, `January 2024`). 1.x (pandas) guessed more freely.
+- The chart image is drawn by resvg rather than matplotlib, so anti-aliasing and text hinting differ slightly; the layout, ticks and colors match.
+- In the app, files can also be dropped onto the window (not only onto the program). The chart in the window is interactive (drag to pan, scroll to zoom both panels together, double-click to reset, hover a point for its lot, date, value and file); its legend lists rules alphabetically. The window follows the system's light or dark theme. Saved PNGs look as before.
+- Column widths in the workbook are set the way Excel counts them, so they come out slightly wider than 1.x's.

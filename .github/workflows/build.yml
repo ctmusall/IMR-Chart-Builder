@@ -6,8 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  # The Rust port runs alongside the Python build until the Rust app replaces it.
-  rust-lint:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,7 +25,7 @@ jobs:
       - name: Licenses and advisories
         uses: EmbarkStudios/cargo-deny-action@v2
 
-  rust:
+  build:
     strategy:
       fail-fast: false
       matrix:
@@ -70,61 +69,18 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: imr-chart-rust-${{ runner.os }}
+          name: imr-chart-${{ runner.os }}
           path: |
             target/release/imr-chart${{ runner.os == 'Windows' && '.exe' || '' }}
             target/release/imr-chart-cli${{ runner.os == 'Windows' && '.exe' || '' }}
             licenses/
-
-  build:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [windows-latest, ubuntu-latest]
-    runs-on: ${{ matrix.os }}
-    env:
-      QT_QPA_PLATFORM: offscreen
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Qt runtime libraries (Linux)
-        if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libegl1 libxkbcommon0 libgl1 libfontconfig1 libdbus-1-3
-
-      - name: Install
-        run: python -m pip install -e ".[dev]"
-
-      - name: Test
-        run: python -m pytest --cov=imr_chart --cov-report=term-missing
-
-      - name: Build executables
-        run: python -m PyInstaller --noconfirm --clean imr_chart.spec
-
-      - name: Smoke-test CLI executable
-        shell: bash
-        run: |
-          ./dist/imr-chart-cli --version
-          printf 'QC Lot,Date Processed,Value\nA,2024-01-01,5e7\nB,2024-01-02,7e7\nC,2024-01-03,6e7\nD,2024-01-04,1e7\n' > smoke.csv
-          ./dist/imr-chart-cli smoke.csv -c Value --lsl 2e7 -o smoke_out
-          test -s smoke_out/IMR_Value.png && test -s smoke_out/IMR_Value.html && test -s smoke_out/IMR_Value.xlsx
-          # The app runs the command line when given options.
-          target/release/imr-chart tests/golden/smoke/smoke.csv -c Value --formats xlsx -o smoke_out/app | grep -q "n=4"
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: imr-chart-${{ runner.os }}
-          path: dist/*
 
   # After every successful build on main, publish the executables as a public GitHub Release
   # (downloadable by anyone, no GitHub account needed; the artifacts above need a login and expire).
   # The release is named after the program version; pushing again without a version bump replaces
   # it, so its tag always points at the commit the files were built from.
   release:
-    needs: build
+    needs: [lint, build]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
@@ -139,13 +95,14 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          version=$(sed -n 's/^__version__ = "\(.*\)"/\1/p' imr_chart/__init__.py)
+          version=$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)
           tag="v${version}"
           mkdir release
-          cp imr-chart-Windows/imr-chart.exe imr-chart-Windows/imr-chart-cli.exe release/
-          cp imr-chart-Linux/imr-chart release/imr-chart-linux
-          cp imr-chart-Linux/imr-chart-cli release/imr-chart-cli-linux
-          (cd release && sha256sum * > SHA256SUMS.txt)
+          cp imr-chart-Windows/target/release/imr-chart.exe imr-chart-Windows/target/release/imr-chart-cli.exe release/
+          cp imr-chart-Linux/target/release/imr-chart release/imr-chart-linux
+          cp imr-chart-Linux/target/release/imr-chart-cli release/imr-chart-cli-linux
+          (cd release && sha256sum imr-chart.exe imr-chart-cli.exe imr-chart-linux imr-chart-cli-linux > SHA256SUMS.txt)
+          cp licenses/*.txt release/
           cat > notes.md <<NOTES
           Built from commit ${GITHUB_SHA::7} after all tests passed.
 
@@ -153,6 +110,7 @@ jobs:
             Windows may show a SmartScreen warning because the exe isn't code-signed: click *More info* → *Run anyway*.
           - **Linux:** download **imr-chart-linux**, run \`chmod +x imr-chart-linux\`, then run it.
           - **SHA256SUMS.txt** lists each file's fingerprint.
+          - The licences of the embedded fonts and plotly.js are included.
           NOTES
           gh release delete "$tag" --cleanup-tag --yes 2>/dev/null || true
           gh release create "$tag" release/* --target "$GITHUB_SHA" --latest \

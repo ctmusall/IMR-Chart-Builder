@@ -1,5 +1,5 @@
 # Developer tasks. Install `just` (https://just.systems) or read the recipes and run the commands.
-# `just ci` runs the same checks as GitHub Actions' Rust jobs.
+# `just ci` runs the same checks as GitHub Actions.
 
 set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 
@@ -38,8 +38,3 @@ verify-xlsx python=".venv/bin/python": build
 # Save the fixture charts as PNG into target/charts/ to look at.
 charts:
     IMR_CHART_DIR=target/charts cargo test -p imr-charts --release --test render
-
-# Regenerate the golden fixtures from the Python implementation (only while it still exists).
-golden:
-    .venv/bin/python tests/golden/generate.py
-    .venv/bin/python tests/golden/generate_charts.py
