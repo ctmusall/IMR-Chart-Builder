@@ -75,13 +75,8 @@ fn version_and_usage_errors() {
 fn smoke_csv_writes_files() {
     let dir = tempfile::tempdir().unwrap();
     let smoke = Path::new(GOLDEN_REL).join("smoke/smoke.csv");
-    cli()
-        .arg(&smoke)
-        .args(["-c", "Value", "--lsl", "2e7", "--formats", "xlsx,html", "-o"])
-        .arg(dir.path())
-        .assert()
-        .success();
-    for ext in ["xlsx", "html"] {
+    cli().arg(&smoke).args(["-c", "Value", "--lsl", "2e7", "-o"]).arg(dir.path()).assert().success();
+    for ext in ["png", "xlsx", "html"] {
         let path = dir.path().join(format!("IMR_Value.{ext}"));
         assert!(std::fs::metadata(&path).unwrap().len() > 1000, "{ext} written");
     }

@@ -13,7 +13,8 @@ const GOLDEN_REL: &str = "../../tests/golden";
 fn header_tab_job(settings: &Settings) -> imr_core::ChartJob {
     let path = Path::new(GOLDEN_REL).join("data/with_header_tab.xlsx");
     let frame = loader::load_table(&path, None).unwrap();
-    build_multi_job(vec![(path, frame)], "QC3 CD34/Unit", Some("Date Processed"), None, None, settings).unwrap()
+    build_multi_job(vec![(path, frame)], "QC3 CD34/Unit", Some("Date Processed"), None, None, settings)
+        .unwrap()
 }
 
 #[test]
@@ -25,7 +26,15 @@ fn xlsx_file_has_every_sheet() {
     let mut wb = open_workbook_auto(&path).unwrap();
     assert_eq!(
         wb.sheet_names(),
-        ["Summary stats", "Verification", "Worked formulas", "Data", "Recompute", "Input audit", "Out of limits"]
+        [
+            "Summary stats",
+            "Verification",
+            "Worked formulas",
+            "Data",
+            "Recompute",
+            "Input audit",
+            "Out of limits"
+        ]
     );
     let data = wb.worksheet_range("Data").unwrap();
     assert_eq!(data.get_size(), (5, 11));

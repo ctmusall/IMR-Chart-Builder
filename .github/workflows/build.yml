@@ -52,8 +52,8 @@ jobs:
         run: |
           cli=target/release/imr-chart-cli
           $cli --version
-          $cli tests/golden/smoke/smoke.csv -c Value --lsl 2e7 --formats xlsx,html -o smoke_out
-          test -s smoke_out/IMR_Value.html && test -s smoke_out/IMR_Value.xlsx
+          $cli tests/golden/smoke/smoke.csv -c Value --lsl 2e7 -o smoke_out
+          test -s smoke_out/IMR_Value.png && test -s smoke_out/IMR_Value.html && test -s smoke_out/IMR_Value.xlsx
 
       - uses: actions/setup-python@v5
         if: runner.os == 'Linux'

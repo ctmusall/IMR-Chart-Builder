@@ -1,0 +1,20 @@
+[package]
+name = "imr-charts"
+description = "The I-MR chart as an image: what matplotlib drew, laid out the same way, saved as PNG"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+imr-core.workspace = true
+chrono.workspace = true
+resvg.workspace = true
+ttf-parser.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
+tempfile.workspace = true
+
+[lints]
+workspace = true

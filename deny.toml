@@ -7,7 +7,12 @@ all-features = false
 [advisories]
 # Fail on known vulnerabilities and on crates that are unmaintained or yanked.
 yanked = "deny"
-ignore = []
+ignore = [
+    # Unmaintained (not vulnerable): text shaping and font parsing inside resvg, which draws the
+    # chart image. Revisit when resvg moves to a maintained font stack.
+    { id = "RUSTSEC-2026-0206", reason = "rustybuzz, via usvg 0.45 (chart text)" },
+    { id = "RUSTSEC-2026-0192", reason = "ttf-parser, via usvg 0.45 and chart text measurement" },
+]
 
 [licenses]
 # Permissive licenses only.

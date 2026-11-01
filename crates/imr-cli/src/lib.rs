@@ -8,11 +8,8 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use clap::Parser;
-use imr_core::report::{ChartJob, DEFAULT_RECENT_DAYS, FORMATS, Settings, SourceTable};
+use imr_core::report::{DEFAULT_RECENT_DAYS, FORMATS, Settings, SourceTable};
 use imr_core::{Error, Frame, build_sources_job, export_html, export_xlsx, loader, parse_limit, rules};
-
-/// Saves a chart as a PNG image (provided by the charts crate once it exists).
-pub type PngSaver = fn(&ChartJob, &Path) -> imr_core::Result<()>;
 
 #[derive(Parser, Debug)]
 #[command(
@@ -83,8 +80,8 @@ pub fn wants_gui(args: &[OsString]) -> bool {
     !args.iter().any(|a| a.to_string_lossy().starts_with('-'))
 }
 
-/// Run the command line with `args` (the first is the program name). PNG output needs `png`.
-pub fn main_with(args: impl IntoIterator<Item = OsString>, png: Option<PngSaver>) -> ExitCode {
+/// Run the command line with `args` (the first is the program name).
+pub fn main_with(args: impl IntoIterator<Item = OsString>) -> ExitCode {
     let args = match Args::try_parse_from(args) {
         Ok(a) => a,
         Err(e) => {
@@ -92,7 +89,7 @@ pub fn main_with(args: impl IntoIterator<Item = OsString>, png: Option<PngSaver>
             return ExitCode::from(if e.use_stderr() { 2 } else { 0 });
         }
     };
-    match run(&args, png) {
+    match run(&args) {
         Ok(code) => ExitCode::from(code),
         Err(e) => {
             eprintln!("error: {e}");
@@ -119,7 +116,7 @@ fn usage_error(msg: &str) -> Result<u8, Error> {
     Ok(2)
 }
 
-fn run(args: &Args, png: Option<PngSaver>) -> Result<u8, Error> {
+fn run(args: &Args) -> Result<u8, Error> {
     let tables: Vec<(PathBuf, Frame)> = args
         .files
         .iter()
@@ -234,14 +231,7 @@ fn run(args: &Args, png: Option<PngSaver>) -> Result<u8, Error> {
         for f in &formats {
             let path = out_path(&args.out, &format!("{}.{f}", job.default_stem()));
             match f.as_str() {
-                "png" => match png {
-                    Some(save) => save(&job, &path)?,
-                    None => {
-                        return Err(Error::msg(
-                            "PNG output is not available in this build yet; use --formats html,xlsx",
-                        ));
-                    }
-                },
+                "png" => imr_charts::save_png(&job, &path)?,
                 "html" => export_html::save_html(&job, &path)?,
                 _ => export_xlsx::save_xlsx(&job, &path)?,
             }

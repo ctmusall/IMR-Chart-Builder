@@ -26,7 +26,7 @@ build:
 # Run the built CLI on the smoke-test file, as CI does.
 smoke: build
     ./target/release/imr-chart-cli --version
-    ./target/release/imr-chart-cli tests/golden/smoke/smoke.csv -c Value --lsl 2e7 --formats xlsx,html -o target/smoke
+    ./target/release/imr-chart-cli tests/golden/smoke/smoke.csv -c Value --lsl 2e7 -o target/smoke
 
 # Everything CI checks (verify-xlsx also needs Python with the `formulas` package).
 ci: lint test smoke
@@ -35,6 +35,11 @@ ci: lint test smoke
 verify-xlsx python=".venv/bin/python": build
     bash tests/golden/verify_xlsx.sh {{python}}
 
+# Save the fixture charts as PNG into target/charts/ to look at.
+charts:
+    IMR_CHART_DIR=target/charts cargo test -p imr-charts --release --test render
+
 # Regenerate the golden fixtures from the Python implementation (only while it still exists).
 golden:
     .venv/bin/python tests/golden/generate.py
+    .venv/bin/python tests/golden/generate_charts.py

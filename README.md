@@ -125,16 +125,18 @@ The app is being ported to Rust, in the same staged way as Workbook Query: the e
 | Crate | What it is |
 |---|---|
 | `crates/imr-core` | The engine: loading, statistics, highlight rules, the Excel stats workbook and the interactive HTML chart (with the same plotly.js embedded) |
+| `crates/imr-charts` | The chart image: laid out as matplotlib laid it out (same panel geometry, axis limits, ticks, legend placement and DejaVu Sans font) and saved as a 200 dpi PNG |
 | `crates/imr-cli` | `imr-chart-cli`, with the same options, messages and exit codes as the Python CLI |
 
 ```
 cargo test --workspace                   # all tests, including parity with Python
 cargo run -p imr-cli -- FILE -c COLUMN   # the command line
 just ci                                  # format, lints, licenses, tests and a smoke test, as CI runs them
+just charts                              # save sample charts to target/charts/ to look at
 just verify-xlsx                         # Excel formulas (Python's `formulas` package) recompute Rust-written workbooks
 ```
 
-**Parity tests.** `tests/golden/generate.py` runs the Python code on fixture files and records what it produced as JSON: loaded tables, parsed numbers and dates, statistics, rule matches, every chart job's audit, data and provenance, each workbook's cells, formulas, styles and column widths, the HTML page, and the command line's output. The Rust tests compare against all of it. The HTML matches byte for byte apart from the plot's random element id. `just golden` regenerates the fixtures while the Python code exists.
+**Parity tests.** `tests/golden/generate.py` runs the Python code on fixture files and records what it produced as JSON: loaded tables, parsed numbers and dates, statistics, rule matches, every chart job's audit, data and provenance, each workbook's cells, formulas, styles and column widths, the HTML page, and the command line's output. `tests/golden/generate_charts.py` records what matplotlib drew: each panel's position, limits, ticks and labels, and every line, point, band, annotation and legend entry. The Rust tests compare against all of it. The HTML matches byte for byte apart from the plot's random element id. `just golden` regenerates the fixtures while the Python code exists.
 
 **Known differences from the Python version**
 
@@ -144,4 +146,5 @@ just verify-xlsx                         # Excel formulas (Python's `formulas` p
 - In the workbook, NUMBERVALUE is saved with Excel's `_xlfn.` prefix, so Excel recognizes it without re-entering the formula.
 - Highlight rule colors accept hex codes, CSS color names, `tab:` colors, `C0`–`C9`, one-letter colors and grey levels, but not matplotlib's `xkcd:` names.
 - Dates written as text are read by a fixed list of formats (ISO, US month/day/year, day/month/year when the first number can't be a month, two-digit years, month names, `January 2024`). pandas' parser guesses more freely.
+- The chart image is drawn by resvg rather than matplotlib's Agg renderer, so anti-aliasing and text hinting differ slightly; the layout, ticks and colors match.
 - Column widths in the workbook are set the way Excel counts them, so they come out slightly wider than openpyxl's.
