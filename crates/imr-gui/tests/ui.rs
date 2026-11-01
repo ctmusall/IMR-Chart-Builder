@@ -78,23 +78,26 @@ fn errors_show_until_closed() {
     assert!(h.state().state.errors.is_empty());
 }
 
-/// Set IMR_UI_DIR to render a screenshot of the window with a chart there (needs a GPU or a
-/// software Vulkan/GL driver).
+/// Set IMR_UI_DIR to render screenshots of the window with a chart there, in the light and dark
+/// themes (needs a GPU or a software Vulkan/GL driver).
 #[test]
 fn screenshot() {
     let Some(dir) = std::env::var_os("IMR_UI_DIR").map(PathBuf::from) else { return };
     std::fs::create_dir_all(&dir).unwrap();
-    let mut app = opened(&["qc_summary.xlsx"]);
-    app.state.choose_column(0, "QC3 CD34/Unit");
-    app.state.lsl = "2e7".into();
-    app.state.load_rules(&PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../tests/golden/rules/qc.json"));
-    assert!(app.state.generate());
-    let mut h = Harness::builder()
-        .with_size([1400.0, 1000.0])
-        .with_theme(egui::Theme::Light)
-        .with_context_setup(imr_gui::setup_fonts)
-        .wgpu()
-        .build_ui_state(|ui, app: &mut ImrApp| app.draw(ui), app);
-    h.run();
-    h.render().unwrap().save(dir.join("window.png")).unwrap();
+    for (theme, name) in [(egui::Theme::Light, "window-light.png"), (egui::Theme::Dark, "window-dark.png")] {
+        let mut app = opened(&["qc_summary.xlsx"]);
+        app.state.choose_column(0, "QC3 CD34/Unit");
+        app.state.lsl = "2e7".into();
+        app.state
+            .load_rules(&PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../tests/golden/rules/qc.json"));
+        assert!(app.state.generate());
+        let mut h = Harness::builder()
+            .with_size([1400.0, 1000.0])
+            .with_theme(theme)
+            .with_context_setup(imr_gui::setup_fonts)
+            .wgpu()
+            .build_ui_state(|ui, app: &mut ImrApp| app.draw(ui), app);
+        h.run();
+        h.render().unwrap().save(dir.join(name)).unwrap();
+    }
 }

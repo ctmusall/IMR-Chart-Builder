@@ -18,6 +18,22 @@ pub fn color32(hex: &str) -> Color32 {
     }
 }
 
+/// A chart color as drawn in the window. The chart's colors are matplotlib's, chosen for white
+/// paper; on a dark background the near-black points turn light, the grey connector lighter, and
+/// the pale recent-days band a faint orange tint. Saved files always use the originals.
+fn shown(hex: &str, dark: bool) -> Color32 {
+    let c = color32(hex);
+    if !dark {
+        return c;
+    }
+    match hex {
+        imr_core::plot::POINT_COLOR => Color32::from_gray(225),
+        imr_core::plot::CONNECTOR_COLOR => Color32::from_gray(150),
+        imr_core::plot::RECENT_BAND_COLOR => Color32::from_rgba_unmultiplied(255, 127, 14, 36),
+        _ => c,
+    }
+}
+
 fn pt_px(points: f64) -> f32 {
     (points * 96.0 / 72.0) as f32
 }
@@ -96,9 +112,10 @@ fn panel_view(
             })
             .x_axis_formatter(|mark, _| date_label(mark.value));
     }
+    let dark = ui.visuals().dark_mode;
     let resp = plot.show(ui, |pu| {
         for b in &p.bands {
-            pu.span(egui_plot::Span::new("", b.x0..=b.x1).fill(color32(&b.color)));
+            pu.span(egui_plot::Span::new("", b.x0..=b.x1).fill(shown(&b.color, dark)));
         }
         for l in &p.lines {
             // NaN breaks the line.
@@ -107,7 +124,7 @@ fn panel_view(
                 if seg.len() > 1 {
                     pu.line(
                         Line::new("", PlotPoints::from(std::mem::take(seg)))
-                            .color(color32(&l.color))
+                            .color(shown(&l.color, dark))
                             .width(1.0)
                             // Draw every segment (no aggregating dense points into a band).
                             .allow_band(false)
@@ -126,7 +143,9 @@ fn panel_view(
             flush(&mut seg, pu);
         }
         for h in &p.hlines {
-            pu.hline(HLine::new("", h.y).color(color32(&h.color)).width(pt_px(h.width)).allow_hover(false));
+            pu.hline(
+                HLine::new("", h.y).color(shown(&h.color, dark)).width(pt_px(h.width)).allow_hover(false),
+            );
         }
         let mut scatters: Vec<&imr_charts::figure::Scatter> = p.scatters.iter().collect();
         scatters.sort_by(|a, b| a.zorder.total_cmp(&b.zorder));
@@ -145,7 +164,7 @@ fn panel_view(
                     .shape(MarkerShape::Circle)
                     .radius(radius)
                     .filled(s.face.is_some())
-                    .color(color32(s.face.as_deref().unwrap_or(&s.edge)))
+                    .color(shown(s.face.as_deref().unwrap_or(&s.edge), dark))
                     .allow_hover(false),
             );
         }
@@ -161,7 +180,7 @@ fn panel_view(
                 Coord::Axes(_) => (p.xlim.0, Align2::LEFT_BOTTOM),
                 Coord::Data(v) => (v, Align2::LEFT_TOP),
             };
-            let mut text = RichText::new(&t.text).color(color32(&t.color)).size(11.0);
+            let mut text = RichText::new(&t.text).color(shown(&t.color, dark)).size(11.0);
             if t.bold {
                 text = text.strong();
             }

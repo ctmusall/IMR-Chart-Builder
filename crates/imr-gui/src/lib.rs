@@ -7,8 +7,7 @@ pub mod state;
 pub use app::ImrApp;
 pub use state::AppState;
 
-/// The look: a light theme (the chart's colors are matplotlib's, chosen for white paper), and
-/// fonts: egui's defaults, with Hack (arrows ▼ ▶) and Noto Emoji (⚠) as fallbacks for symbols the
+/// Fonts: egui's defaults, with Hack (arrows ▼ ▶) and Noto Emoji (⚠) as fallbacks for symbols the
 /// UI font lacks.
 pub fn setup_fonts(ctx: &egui::Context) {
     use std::sync::Arc;
@@ -32,7 +31,6 @@ pub fn setup_fonts(ctx: &egui::Context) {
         }
     }
     ctx.set_fonts(fonts);
-    ctx.set_theme(egui::Theme::Light);
 }
 
 /// The window icon.
