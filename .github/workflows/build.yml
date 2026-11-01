@@ -56,7 +56,7 @@ jobs:
           # The app runs the command line when given options.
           target/release/imr-chart tests/golden/smoke/smoke.csv -c Value --formats xlsx -o smoke_out/app | grep -q "n=4"
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         if: runner.os == 'Linux'
         with:
           python-version: "3.12"
