@@ -6,6 +6,73 @@ on:
   workflow_dispatch:
 
 jobs:
+  # The Rust port runs alongside the Python build until the Rust app replaces it.
+  rust-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain (pinned in rust-toolchain.toml)
+        run: rustup show active-toolchain || rustup toolchain install
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Format
+        run: cargo fmt --all --check
+
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+
+      - name: Licenses and advisories
+        uses: EmbarkStudios/cargo-deny-action@v2
+
+  rust:
+    strategy:
+      fail-fast: false
+      matrix:
+        # ubuntu-22.04 so the Linux executables run on older glibc too.
+        os: [windows-latest, ubuntu-22.04]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Toolchain (pinned in rust-toolchain.toml)
+        run: rustup show active-toolchain || rustup toolchain install
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Test
+        run: cargo test --workspace --locked
+
+      - name: Build executables
+        run: cargo build --release --workspace --locked
+
+      - name: Smoke-test CLI executable
+        shell: bash
+        run: |
+          cli=target/release/imr-chart-cli
+          $cli --version
+          $cli tests/golden/smoke/smoke.csv -c Value --lsl 2e7 --formats xlsx,html -o smoke_out
+          test -s smoke_out/IMR_Value.html && test -s smoke_out/IMR_Value.xlsx
+
+      - uses: actions/setup-python@v5
+        if: runner.os == 'Linux'
+        with:
+          python-version: "3.12"
+
+      - name: Excel formulas recompute the workbooks
+        if: runner.os == 'Linux'
+        run: |
+          python -m pip install formulas openpyxl
+          bash tests/golden/verify_xlsx.sh python
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: imr-chart-rust-${{ runner.os }}
+          path: |
+            target/release/imr-chart-cli${{ runner.os == 'Windows' && '.exe' || '' }}
+            licenses/
+
   build:
     strategy:
       fail-fast: false

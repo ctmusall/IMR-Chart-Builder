@@ -1,0 +1,40 @@
+{
+  "rules": [
+    {
+      "name": "Retest",
+      "column": "Notes",
+      "op": "contains",
+      "value": "retest",
+      "color": "tab:orange",
+      "enabled": true,
+      "sheet": ""
+    },
+    {
+      "name": "",
+      "column": "QC3 CD34 Viability",
+      "op": "<",
+      "value": "85%",
+      "color": "#2ca02c",
+      "enabled": true,
+      "sheet": "Summary"
+    },
+    {
+      "name": "Late",
+      "column": "Date Processed",
+      "op": ">=",
+      "value": "2025-09-01",
+      "color": "red",
+      "enabled": true,
+      "sheet": ""
+    },
+    {
+      "name": "off",
+      "column": "Notes",
+      "op": "is blank",
+      "value": "",
+      "color": "#000000",
+      "enabled": false,
+      "sheet": ""
+    }
+  ]
+}

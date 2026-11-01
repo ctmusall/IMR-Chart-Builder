@@ -1,0 +1,1 @@
+{"rules": [{"column": "Notes", "op": "is not blank", "sheet": "Elsewhere"}, {"column": "Notes", "op": "=", "value": "a", "sheet": "Summary", "color": "blue"}]}

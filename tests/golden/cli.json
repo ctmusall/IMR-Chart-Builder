@@ -1,0 +1,409 @@
+[
+ {
+  "name": "list_columns",
+  "args": [
+   "{DIR}/data/with_header_tab.xlsx",
+   "--list-columns",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 0,
+  "stdout": "Sheets: Summary, Query\nDate columns: Date Processed\nNumeric columns:\n  Date Processed\n  QC3 CD34/Unit\n  QC3 CD34 Viability\n",
+  "stderr": "",
+  "files": []
+ },
+ {
+  "name": "list_columns_multi",
+  "args": [
+   "{DIR}/data/part1.xlsx",
+   "{DIR}/data/part2.xlsx",
+   "{DIR}/data/data.csv",
+   "--list-columns",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 0,
+  "stdout": "Sheets: \nDate columns: Date Processed\nNumeric columns:\n  QC3 CD34/Unit\n  QC3 CD34 Viability\n",
+  "stderr": "",
+  "files": []
+ },
+ {
+  "name": "list_columns_qc",
+  "args": [
+   "{DIR}/data/qc_summary.xlsx",
+   "--list-columns",
+   "--sheet",
+   "Archive",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 0,
+  "stdout": "Sheets: Summary, Archive\nDate columns: Processing Date\nNumeric columns:\n  CD34 per unit\n  QC3 CD34 Viability\n  QC2 CFU (GM&GEMM)\n",
+  "stderr": "",
+  "files": []
+ },
+ {
+  "name": "one",
+  "args": [
+   "{DIR}/data/with_header_tab.xlsx",
+   "-c",
+   "QC3 CD34/Unit",
+   "--lsl",
+   "2e7",
+   "--formats",
+   "xlsx,html",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 0,
+  "stdout": "QC3 CD34/Unit: n=4 excluded=2 mean=5.5e+07 UCL=1.61383e+08 LCL=-5.1383e+07 MR-UCL=1.30691e+08\n  wrote {OUT}/IMR_QC3_CD34_Unit.xlsx\n  wrote {OUT}/IMR_QC3_CD34_Unit.html\n",
+  "stderr": "",
+  "files": [
+   "IMR_QC3_CD34_Unit.html",
+   "IMR_QC3_CD34_Unit.xlsx"
+  ]
+ },
+ {
+  "name": "two_columns",
+  "args": [
+   "{DIR}/data/data.csv",
+   "-c",
+   "QC3 CD34/Unit",
+   "--lsl",
+   "2e7",
+   "-c",
+   "QC3 CD34 Viability",
+   "--lsl",
+   "50%",
+   "--formats",
+   "html",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 0,
+  "stdout": "QC3 CD34/Unit: n=4 excluded=2 mean=5.5e+07 UCL=1.61383e+08 LCL=-5.1383e+07 MR-UCL=1.30691e+08\n  wrote {OUT}/IMR_QC3_CD34_Unit.html\nQC3 CD34 Viability: n=6 excluded=0 mean=0.725 UCL=1.20372 LCL=0.246277 MR-UCL=0.588112\n  wrote {OUT}/IMR_QC3_CD34_Viability.html\n",
+  "stderr": "",
+  "files": [
+   "IMR_QC3_CD34_Unit.html",
+   "IMR_QC3_CD34_Viability.html"
+  ]
+ },
+ {
+  "name": "one_lsl_two_columns",
+  "args": [
+   "{DIR}/data/data.csv",
+   "-c",
+   "QC3 CD34/Unit",
+   "-c",
+   "QC3 CD34 Viability",
+   "--lsl",
+   "0",
+   "--formats",
+   " XLSX , ",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 0,
+  "stdout": "QC3 CD34/Unit: n=4 excluded=2 mean=5.5e+07 UCL=1.61383e+08 LCL=-5.1383e+07 MR-UCL=1.30691e+08\n  wrote {OUT}/IMR_QC3_CD34_Unit.xlsx\nQC3 CD34 Viability: n=6 excluded=0 mean=0.725 UCL=1.20372 LCL=0.246277 MR-UCL=0.588112\n  wrote {OUT}/IMR_QC3_CD34_Viability.xlsx\n",
+  "stderr": "",
+  "files": [
+   "IMR_QC3_CD34_Unit.xlsx",
+   "IMR_QC3_CD34_Viability.xlsx"
+  ]
+ },
+ {
+  "name": "no_date",
+  "args": [
+   "{DIR}/data/with_header_tab.xlsx",
+   "-c",
+   "QC3 CD34/Unit",
+   "--no-date",
+   "--formats",
+   "xlsx",
+   "--sigma",
+   "2",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 0,
+  "stdout": "QC3 CD34/Unit: n=4 excluded=2 mean=5.5e+07 UCL=1.37742e+08 LCL=-2.77423e+07 MR-UCL=1.17204e+08\n  wrote {OUT}/IMR_QC3_CD34_Unit.xlsx\n",
+  "stderr": "",
+  "files": [
+   "IMR_QC3_CD34_Unit.xlsx"
+  ]
+ },
+ {
+  "name": "multi",
+  "args": [
+   "{DIR}/data/part1.xlsx",
+   "{DIR}/data/part2.xlsx",
+   "-c",
+   "QC3 CD34/Unit",
+   "--lsl",
+   "2e7",
+   "--formats",
+   "xlsx",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 0,
+  "stdout": "QC3 CD34/Unit: files=2 n=4 excluded=2 mean=5.5e+07 UCL=1.61383e+08 LCL=-5.1383e+07 MR-UCL=1.30691e+08\n  wrote {OUT}/IMR_QC3_CD34_Unit.xlsx\n",
+  "stderr": "",
+  "files": [
+   "IMR_QC3_CD34_Unit.xlsx"
+  ]
+ },
+ {
+  "name": "dups",
+  "args": [
+   "{DIR}/data/dup_a.xlsx",
+   "{DIR}/data/dup_b.xlsx",
+   "-c",
+   "QC3 CD34/Unit",
+   "--formats",
+   "xlsx",
+   "--recent-days",
+   "0",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 0,
+  "stdout": "QC3 CD34/Unit: files=2 n=21 excluded=3 mean=7.90962e+07 UCL=1.5036e+08 LCL=7.83214e+06 MR-UCL=8.75479e+07\n  wrote {OUT}/IMR_QC3_CD34_Unit.xlsx\n",
+  "stderr": "  warning: 8 points have the same lot, date and value in more than one file (overlapping exports?); all are charted\n",
+  "files": [
+   "IMR_QC3_CD34_Unit.xlsx"
+  ]
+ },
+ {
+  "name": "rules",
+  "args": [
+   "{DIR}/data/qc_summary.xlsx",
+   "-c",
+   "QC3 CD34/Unit",
+   "--rules",
+   "{DIR}/rules/qc.json",
+   "--formats",
+   "xlsx",
+   "--label-column",
+   "ISBT DIN",
+   "--date-column",
+   "Date Processed",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 0,
+  "stdout": "QC3 CD34/Unit: n=57 excluded=3 mean=6.14277e+07 UCL=1.24049e+08 LCL=-1.19314e+06 MR-UCL=7.69297e+07 highlighted=42\n  wrote {OUT}/IMR_QC3_CD34_Unit.xlsx\n",
+  "stderr": "",
+  "files": [
+   "IMR_QC3_CD34_Unit.xlsx"
+  ]
+ },
+ {
+  "name": "rules_sheet",
+  "args": [
+   "{DIR}/data/with_header_tab.xlsx",
+   "-c",
+   "QC3 CD34/Unit",
+   "--rules",
+   "{DIR}/rules/sheet.json",
+   "--formats",
+   "xlsx",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 0,
+  "stdout": "QC3 CD34/Unit: n=4 excluded=2 mean=5.5e+07 UCL=1.61383e+08 LCL=-5.1383e+07 MR-UCL=1.30691e+08 highlighted=1\n  wrote {OUT}/IMR_QC3_CD34_Unit.xlsx\n",
+  "stderr": "",
+  "files": [
+   "IMR_QC3_CD34_Unit.xlsx"
+  ]
+ },
+ {
+  "name": "no_column",
+  "args": [
+   "{DIR}/data/with_header_tab.xlsx",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 2,
+  "stdout": "",
+  "stderr": "error: at least one --column is required (use --list-columns to see options)\n",
+  "files": []
+ },
+ {
+  "name": "bad_format",
+  "args": [
+   "{DIR}/data/with_header_tab.xlsx",
+   "-c",
+   "QC3 CD34/Unit",
+   "--formats",
+   "png,pdf,svg",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 2,
+  "stdout": "",
+  "stderr": "error: unknown format(s): pdf, svg\n",
+  "files": []
+ },
+ {
+  "name": "negative_days",
+  "args": [
+   "{DIR}/data/with_header_tab.xlsx",
+   "-c",
+   "QC3 CD34/Unit",
+   "--recent-days",
+   "-1",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 2,
+  "stdout": "",
+  "stderr": "error: --recent-days must be 0 or more\n",
+  "files": []
+ },
+ {
+  "name": "lsl_count",
+  "args": [
+   "{DIR}/data/with_header_tab.xlsx",
+   "-c",
+   "QC3 CD34/Unit",
+   "--lsl",
+   "1",
+   "--lsl",
+   "2",
+   "--lsl",
+   "3",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 2,
+  "stdout": "",
+  "stderr": "error: give one --lsl for all columns, or one per --column\n",
+  "files": []
+ },
+ {
+  "name": "bad_lsl",
+  "args": [
+   "{DIR}/data/with_header_tab.xlsx",
+   "-c",
+   "QC3 CD34/Unit",
+   "--lsl",
+   "abc",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 1,
+  "stdout": "",
+  "stderr": "error: Invalid limit value: 'abc'\n",
+  "files": []
+ },
+ {
+  "name": "missing_file",
+  "args": [
+   "{DIR}/data/nope.xlsx",
+   "-c",
+   "x",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 1,
+  "stdout": "",
+  "stderr": "error: File not found: {DIR}/data/nope.xlsx\n",
+  "files": []
+ },
+ {
+  "name": "missing_sheet",
+  "args": [
+   "{DIR}/data/part1.xlsx",
+   "{DIR}/data/part2.xlsx",
+   "--sheet",
+   "Nope",
+   "-c",
+   "x",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 1,
+  "stdout": "",
+  "stderr": "error: {DIR}/data/part1.xlsx: Sheet 'Nope' not found. Available: Summary, Column Headers (Summary)\n",
+  "files": []
+ },
+ {
+  "name": "missing_column",
+  "args": [
+   "{DIR}/data/with_header_tab.xlsx",
+   "-c",
+   "Nope",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 1,
+  "stdout": "",
+  "stderr": "error: Column 'Nope' not found in with_header_tab.xlsx\n",
+  "files": []
+ },
+ {
+  "name": "missing_in_second",
+  "args": [
+   "{DIR}/data/part1.xlsx",
+   "{DIR}/data/messy.csv",
+   "-c",
+   "QC3 CD34/Unit",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 1,
+  "stdout": "",
+  "stderr": "error: Column 'QC3 CD34/Unit' not found in messy.csv\n",
+  "files": []
+ },
+ {
+  "name": "too_few",
+  "args": [
+   "{DIR}/data/semicolon.csv",
+   "-c",
+   "Lot",
+   "--formats",
+   "xlsx",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 1,
+  "stdout": "",
+  "stderr": "error: At least 2 data points are required for an I-MR chart\n",
+  "files": []
+ },
+ {
+  "name": "bad_rules",
+  "args": [
+   "{DIR}/data/with_header_tab.xlsx",
+   "-c",
+   "QC3 CD34/Unit",
+   "--rules",
+   "{DIR}/rules/bad.json",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 1,
+  "stdout": "",
+  "stderr": "error: Rules file {DIR}/rules/bad.json: each rule needs a \"column\" and an \"op\"\n",
+  "files": []
+ },
+ {
+  "name": "missing_rules",
+  "args": [
+   "{DIR}/data/with_header_tab.xlsx",
+   "-c",
+   "QC3 CD34/Unit",
+   "--rules",
+   "{DIR}/data/nope.json",
+   "-o",
+   "{OUT}"
+  ],
+  "code": 1,
+  "stdout": "",
+  "stderr": "error: Rules file not found: {DIR}/data/nope.json\n",
+  "files": []
+ }
+]

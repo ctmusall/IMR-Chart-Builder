@@ -117,3 +117,31 @@ PyInstaller cannot cross-compile, so build each OS's executable on that OS.
 The app icon (`imr_chart/assets/icon.png` and `icon.ico`) is drawn by `scripts/make_icon.py`; rerun it after changing the design.
 
 Both build scripts run the full test suite before building. `sheet.xlsx` holds real QC data, so keep it out of public repositories. The tests that use it skip automatically when it's absent.
+
+## Rust port (in progress)
+
+The app is being ported to Rust, in the same staged way as Workbook Query: the engine and command line first, then the chart image, then the desktop app. The Python version stays the released one until the switch-over. CI builds and tests both.
+
+| Crate | What it is |
+|---|---|
+| `crates/imr-core` | The engine: loading, statistics, highlight rules, the Excel stats workbook and the interactive HTML chart (with the same plotly.js embedded) |
+| `crates/imr-cli` | `imr-chart-cli`, with the same options, messages and exit codes as the Python CLI |
+
+```
+cargo test --workspace                   # all tests, including parity with Python
+cargo run -p imr-cli -- FILE -c COLUMN   # the command line
+just ci                                  # format, lints, licenses, tests and a smoke test, as CI runs them
+just verify-xlsx                         # Excel formulas (Python's `formulas` package) recompute Rust-written workbooks
+```
+
+**Parity tests.** `tests/golden/generate.py` runs the Python code on fixture files and records what it produced as JSON: loaded tables, parsed numbers and dates, statistics, rule matches, every chart job's audit, data and provenance, each workbook's cells, formulas, styles and column widths, the HTML page, and the command line's output. The Rust tests compare against all of it. The HTML matches byte for byte apart from the plot's random element id. `just golden` regenerates the fixtures while the Python code exists.
+
+**Known differences from the Python version**
+
+- `.xls` files work. The Python build can't read them, because `xlrd` isn't installed.
+- Charting several files that include a row with a blank lot, or several files in row order, works. Python crashes while counting points repeated across files.
+- The *Generated* time in the stats workbook shows the time zone as an offset (`-05:00`), not an abbreviation (`EST`).
+- In the workbook, NUMBERVALUE is saved with Excel's `_xlfn.` prefix, so Excel recognizes it without re-entering the formula.
+- Highlight rule colors accept hex codes, CSS color names, `tab:` colors, `C0`–`C9`, one-letter colors and grey levels, but not matplotlib's `xkcd:` names.
+- Dates written as text are read by a fixed list of formats (ISO, US month/day/year, day/month/year when the first number can't be a month, two-digit years, month names, `January 2024`). pandas' parser guesses more freely.
+- Column widths in the workbook are set the way Excel counts them, so they come out slightly wider than openpyxl's.

@@ -1,0 +1,4278 @@
+{
+ "files": [
+  {
+   "file": "with_header_tab.xlsx",
+   "sheets": [
+    "Summary",
+    "Query"
+   ],
+   "tables": {
+    "Summary": {
+     "columns": [
+      "QC Lot",
+      "Date Processed",
+      "QC3 CD34/Unit",
+      "QC3 CD34 Viability",
+      "Notes"
+     ],
+     "index": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "cells": {
+      "QC Lot": [
+       "L3",
+       "L1",
+       "L2",
+       "L4",
+       "L5",
+       "L6"
+      ],
+      "Date Processed": [
+       45400,
+       45363,
+       45383,
+       45410,
+       45420,
+       45430
+      ],
+      "QC3 CD34/Unit": [
+       70000000,
+       50000000,
+       90000000,
+       null,
+       "bad",
+       10000000
+      ],
+      "QC3 CD34 Viability": [
+       0.9,
+       0.8,
+       0.95,
+       0.7,
+       0.4,
+       0.6
+      ],
+      "Notes": [
+       "a",
+       "b",
+       "c",
+       "d",
+       "e",
+       "f"
+      ]
+     },
+     "numeric_columns": [
+      "Date Processed",
+      "QC3 CD34/Unit",
+      "QC3 CD34 Viability"
+     ],
+     "date_columns": [
+      "Date Processed"
+     ],
+     "pick_date": "Date Processed",
+     "pick_label": "QC Lot",
+     "to_numeric": {
+      "QC Lot": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "Date Processed": [
+       45400.0,
+       45363.0,
+       45383.0,
+       45410.0,
+       45420.0,
+       45430.0
+      ],
+      "QC3 CD34/Unit": [
+       70000000.0,
+       50000000.0,
+       90000000.0,
+       null,
+       null,
+       10000000.0
+      ],
+      "QC3 CD34 Viability": [
+       0.9,
+       0.8,
+       0.95,
+       0.7,
+       0.4,
+       0.6
+      ],
+      "Notes": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ]
+     },
+     "to_datetime": {
+      "Date Processed": [
+       {
+        "d": "2024-04-18T00:00:00"
+       },
+       {
+        "d": "2024-03-12T00:00:00"
+       },
+       {
+        "d": "2024-04-01T00:00:00"
+       },
+       {
+        "d": "2024-04-28T00:00:00"
+       },
+       {
+        "d": "2024-05-08T00:00:00"
+       },
+       {
+        "d": "2024-05-18T00:00:00"
+       }
+      ]
+     }
+    },
+    "Query": {
+     "columns": [
+      "x",
+      "y"
+     ],
+     "index": [
+      2
+     ],
+     "cells": {
+      "x": [
+       1
+      ],
+      "y": [
+       2
+      ]
+     },
+     "numeric_columns": [
+      "x",
+      "y"
+     ],
+     "date_columns": [],
+     "pick_date": null,
+     "pick_label": null,
+     "to_numeric": {
+      "x": [
+       1.0
+      ],
+      "y": [
+       2.0
+      ]
+     },
+     "to_datetime": {}
+    },
+    "MC Tags": {
+     "columns": [
+      "tag"
+     ],
+     "index": [],
+     "cells": {
+      "tag": []
+     },
+     "numeric_columns": [],
+     "date_columns": [],
+     "pick_date": null,
+     "pick_label": null,
+     "to_numeric": {
+      "tag": []
+     },
+     "to_datetime": {}
+    },
+    "Column Headers (Summary)": {
+     "columns": [
+      "QC Lot",
+      "Date Processed",
+      "QC3 CD34/Unit",
+      "QC3 CD34 Viability",
+      "Notes"
+     ],
+     "index": [],
+     "cells": {
+      "QC Lot": [],
+      "Date Processed": [],
+      "QC3 CD34/Unit": [],
+      "QC3 CD34 Viability": [],
+      "Notes": []
+     },
+     "numeric_columns": [],
+     "date_columns": [
+      "Date Processed"
+     ],
+     "pick_date": "Date Processed",
+     "pick_label": "QC Lot",
+     "to_numeric": {
+      "QC Lot": [],
+      "Date Processed": [],
+      "QC3 CD34/Unit": [],
+      "QC3 CD34 Viability": [],
+      "Notes": []
+     },
+     "to_datetime": {
+      "Date Processed": []
+     }
+    },
+    "Nope": {
+     "error": "Sheet 'Nope' not found. Available: MC Tags, Query, Summary, Column Headers (Summary)"
+    }
+   },
+   "default": [
+    "QC Lot",
+    "Date Processed",
+    "QC3 CD34/Unit",
+    "QC3 CD34 Viability",
+    "Notes"
+   ]
+  },
+  {
+   "file": "inline.xlsx",
+   "sheets": [
+    "Data"
+   ],
+   "tables": {
+    "Data": {
+     "columns": [
+      "QC Lot",
+      "Date Processed",
+      "QC3 CD34/Unit",
+      "QC3 CD34 Viability",
+      "Notes"
+     ],
+     "index": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "cells": {
+      "QC Lot": [
+       "L3",
+       "L1",
+       "L2",
+       "L4",
+       "L5",
+       "L6"
+      ],
+      "Date Processed": [
+       45400,
+       45363,
+       45383,
+       45410,
+       45420,
+       45430
+      ],
+      "QC3 CD34/Unit": [
+       70000000,
+       50000000,
+       90000000,
+       null,
+       "bad",
+       10000000
+      ],
+      "QC3 CD34 Viability": [
+       0.9,
+       0.8,
+       0.95,
+       0.7,
+       0.4,
+       0.6
+      ],
+      "Notes": [
+       "a",
+       "b",
+       "c",
+       "d",
+       "e",
+       "f"
+      ]
+     },
+     "numeric_columns": [
+      "Date Processed",
+      "QC3 CD34/Unit",
+      "QC3 CD34 Viability"
+     ],
+     "date_columns": [
+      "Date Processed"
+     ],
+     "pick_date": "Date Processed",
+     "pick_label": "QC Lot",
+     "to_numeric": {
+      "QC Lot": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "Date Processed": [
+       45400.0,
+       45363.0,
+       45383.0,
+       45410.0,
+       45420.0,
+       45430.0
+      ],
+      "QC3 CD34/Unit": [
+       70000000.0,
+       50000000.0,
+       90000000.0,
+       null,
+       null,
+       10000000.0
+      ],
+      "QC3 CD34 Viability": [
+       0.9,
+       0.8,
+       0.95,
+       0.7,
+       0.4,
+       0.6
+      ],
+      "Notes": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ]
+     },
+     "to_datetime": {
+      "Date Processed": [
+       {
+        "d": "2024-04-18T00:00:00"
+       },
+       {
+        "d": "2024-03-12T00:00:00"
+       },
+       {
+        "d": "2024-04-01T00:00:00"
+       },
+       {
+        "d": "2024-04-28T00:00:00"
+       },
+       {
+        "d": "2024-05-08T00:00:00"
+       },
+       {
+        "d": "2024-05-18T00:00:00"
+       }
+      ]
+     }
+    }
+   },
+   "default": [
+    "QC Lot",
+    "Date Processed",
+    "QC3 CD34/Unit",
+    "QC3 CD34 Viability",
+    "Notes"
+   ]
+  },
+  {
+   "file": "noheader.xlsx",
+   "sheets": [
+    "Sheet1"
+   ],
+   "tables": {
+    "Sheet1": {
+     "columns": [
+      "Column 1",
+      "Column 2"
+     ],
+     "index": [
+      1,
+      2,
+      3
+     ],
+     "cells": {
+      "Column 1": [
+       1,
+       2,
+       3
+      ],
+      "Column 2": [
+       2.5,
+       3.5,
+       1.5
+      ]
+     },
+     "numeric_columns": [
+      "Column 1",
+      "Column 2"
+     ],
+     "date_columns": [],
+     "pick_date": null,
+     "pick_label": null,
+     "to_numeric": {
+      "Column 1": [
+       1.0,
+       2.0,
+       3.0
+      ],
+      "Column 2": [
+       2.5,
+       3.5,
+       1.5
+      ]
+     },
+     "to_datetime": {}
+    }
+   },
+   "default": [
+    "Column 1",
+    "Column 2"
+   ]
+  },
+  {
+   "file": "data.csv",
+   "sheets": [
+    "data"
+   ],
+   "tables": {
+    "data": {
+     "columns": [
+      "QC Lot",
+      "Date Processed",
+      "QC3 CD34/Unit",
+      "QC3 CD34 Viability",
+      "Notes"
+     ],
+     "index": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "cells": {
+      "QC Lot": [
+       "L3",
+       "L1",
+       "L2",
+       "L4",
+       "L5",
+       "L6"
+      ],
+      "Date Processed": [
+       "2024-04-18",
+       "2024-03-12",
+       "2024-04-01",
+       "2024-04-28",
+       "2024-05-08",
+       "2024-05-18"
+      ],
+      "QC3 CD34/Unit": [
+       "70000000.0",
+       "50000000.0",
+       "90000000.0",
+       null,
+       "bad",
+       "10000000.0"
+      ],
+      "QC3 CD34 Viability": [
+       0.9,
+       0.8,
+       0.95,
+       0.7,
+       0.4,
+       0.6
+      ],
+      "Notes": [
+       "a",
+       "b",
+       "c",
+       "d",
+       "e",
+       "f"
+      ]
+     },
+     "numeric_columns": [
+      "QC3 CD34/Unit",
+      "QC3 CD34 Viability"
+     ],
+     "date_columns": [
+      "Date Processed"
+     ],
+     "pick_date": "Date Processed",
+     "pick_label": "QC Lot",
+     "to_numeric": {
+      "QC Lot": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "Date Processed": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "QC3 CD34/Unit": [
+       70000000.0,
+       50000000.0,
+       90000000.0,
+       null,
+       null,
+       10000000.0
+      ],
+      "QC3 CD34 Viability": [
+       0.9,
+       0.8,
+       0.95,
+       0.7,
+       0.4,
+       0.6
+      ],
+      "Notes": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ]
+     },
+     "to_datetime": {
+      "Date Processed": [
+       {
+        "d": "2024-04-18T00:00:00"
+       },
+       {
+        "d": "2024-03-12T00:00:00"
+       },
+       {
+        "d": "2024-04-01T00:00:00"
+       },
+       {
+        "d": "2024-04-28T00:00:00"
+       },
+       {
+        "d": "2024-05-08T00:00:00"
+       },
+       {
+        "d": "2024-05-18T00:00:00"
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "file": "part1.xlsx",
+   "sheets": [
+    "Summary"
+   ],
+   "tables": {
+    "Summary": {
+     "columns": [
+      "QC Lot",
+      "Date Processed",
+      "QC3 CD34/Unit",
+      "QC3 CD34 Viability",
+      "Notes"
+     ],
+     "index": [
+      1,
+      2,
+      3
+     ],
+     "cells": {
+      "QC Lot": [
+       "L3",
+       "L1",
+       "L2"
+      ],
+      "Date Processed": [
+       45400,
+       45363,
+       45383
+      ],
+      "QC3 CD34/Unit": [
+       70000000,
+       50000000,
+       90000000
+      ],
+      "QC3 CD34 Viability": [
+       0.9,
+       0.8,
+       0.95
+      ],
+      "Notes": [
+       "a",
+       "b",
+       "c"
+      ]
+     },
+     "numeric_columns": [
+      "Date Processed",
+      "QC3 CD34/Unit",
+      "QC3 CD34 Viability"
+     ],
+     "date_columns": [
+      "Date Processed"
+     ],
+     "pick_date": "Date Processed",
+     "pick_label": "QC Lot",
+     "to_numeric": {
+      "QC Lot": [
+       null,
+       null,
+       null
+      ],
+      "Date Processed": [
+       45400.0,
+       45363.0,
+       45383.0
+      ],
+      "QC3 CD34/Unit": [
+       70000000.0,
+       50000000.0,
+       90000000.0
+      ],
+      "QC3 CD34 Viability": [
+       0.9,
+       0.8,
+       0.95
+      ],
+      "Notes": [
+       null,
+       null,
+       null
+      ]
+     },
+     "to_datetime": {
+      "Date Processed": [
+       {
+        "d": "2024-04-18T00:00:00"
+       },
+       {
+        "d": "2024-03-12T00:00:00"
+       },
+       {
+        "d": "2024-04-01T00:00:00"
+       }
+      ]
+     }
+    }
+   },
+   "default": [
+    "QC Lot",
+    "Date Processed",
+    "QC3 CD34/Unit",
+    "QC3 CD34 Viability",
+    "Notes"
+   ]
+  },
+  {
+   "file": "part2.xlsx",
+   "sheets": [
+    "Summary"
+   ],
+   "tables": {
+    "Summary": {
+     "columns": [
+      "QC Lot",
+      "Date Processed",
+      "QC3 CD34/Unit",
+      "QC3 CD34 Viability",
+      "Notes"
+     ],
+     "index": [
+      1,
+      2,
+      3
+     ],
+     "cells": {
+      "QC Lot": [
+       "L4",
+       "L5",
+       "L6"
+      ],
+      "Date Processed": [
+       45410,
+       45420,
+       45430
+      ],
+      "QC3 CD34/Unit": [
+       null,
+       "bad",
+       10000000
+      ],
+      "QC3 CD34 Viability": [
+       0.7,
+       0.4,
+       0.6
+      ],
+      "Notes": [
+       "d",
+       "e",
+       "f"
+      ]
+     },
+     "numeric_columns": [
+      "Date Processed",
+      "QC3 CD34 Viability"
+     ],
+     "date_columns": [
+      "Date Processed"
+     ],
+     "pick_date": "Date Processed",
+     "pick_label": "QC Lot",
+     "to_numeric": {
+      "QC Lot": [
+       null,
+       null,
+       null
+      ],
+      "Date Processed": [
+       45410.0,
+       45420.0,
+       45430.0
+      ],
+      "QC3 CD34/Unit": [
+       null,
+       null,
+       10000000.0
+      ],
+      "QC3 CD34 Viability": [
+       0.7,
+       0.4,
+       0.6
+      ],
+      "Notes": [
+       null,
+       null,
+       null
+      ]
+     },
+     "to_datetime": {
+      "Date Processed": [
+       {
+        "d": "2024-04-28T00:00:00"
+       },
+       {
+        "d": "2024-05-08T00:00:00"
+       },
+       {
+        "d": "2024-05-18T00:00:00"
+       }
+      ]
+     }
+    }
+   },
+   "default": [
+    "QC Lot",
+    "Date Processed",
+    "QC3 CD34/Unit",
+    "QC3 CD34 Viability",
+    "Notes"
+   ]
+  },
+  {
+   "file": "other/part1.xlsx",
+   "sheets": [
+    "Summary"
+   ],
+   "tables": {
+    "Summary": {
+     "columns": [
+      "QC Lot",
+      "Date Processed",
+      "QC3 CD34/Unit",
+      "QC3 CD34 Viability",
+      "Notes"
+     ],
+     "index": [
+      1,
+      2
+     ],
+     "cells": {
+      "QC Lot": [
+       "L7",
+       "L8"
+      ],
+      "Date Processed": [
+       45440,
+       45450
+      ],
+      "QC3 CD34/Unit": [
+       60000000,
+       65000000
+      ],
+      "QC3 CD34 Viability": [
+       0.85,
+       0.9
+      ],
+      "Notes": [
+       "g",
+       "h"
+      ]
+     },
+     "numeric_columns": [
+      "Date Processed",
+      "QC3 CD34/Unit",
+      "QC3 CD34 Viability"
+     ],
+     "date_columns": [
+      "Date Processed"
+     ],
+     "pick_date": "Date Processed",
+     "pick_label": "QC Lot",
+     "to_numeric": {
+      "QC Lot": [
+       null,
+       null
+      ],
+      "Date Processed": [
+       45440.0,
+       45450.0
+      ],
+      "QC3 CD34/Unit": [
+       60000000.0,
+       65000000.0
+      ],
+      "QC3 CD34 Viability": [
+       0.85,
+       0.9
+      ],
+      "Notes": [
+       null,
+       null
+      ]
+     },
+     "to_datetime": {
+      "Date Processed": [
+       {
+        "d": "2024-05-28T00:00:00"
+       },
+       {
+        "d": "2024-06-07T00:00:00"
+       }
+      ]
+     }
+    }
+   },
+   "default": [
+    "QC Lot",
+    "Date Processed",
+    "QC3 CD34/Unit",
+    "QC3 CD34 Viability",
+    "Notes"
+   ]
+  },
+  {
+   "file": "messy.csv",
+   "sheets": [
+    "messy"
+   ],
+   "tables": {
+    "messy": {
+     "columns": [
+      "QC Lot",
+      "Date Processed",
+      "CD34"
+     ],
+     "index": [
+      2,
+      3,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+     ],
+     "cells": {
+      "QC Lot": [
+       "L3",
+       "L1",
+       "L2",
+       "L4",
+       "L5",
+       "L6",
+       "L7",
+       "L8",
+       "L9",
+       "L10"
+      ],
+      "Date Processed": [
+       "2024-04-18",
+       "2024-03-12",
+       "2024-04-01",
+       "2024-04-28",
+       "2024-05-08",
+       "2024-05-18",
+       null,
+       "2024-05-20",
+       "2024-05-21",
+       "2024-05-22"
+      ],
+      "CD34": [
+       "7.0e7",
+       "5.0e7",
+       "9.0e7",
+       null,
+       "bad",
+       "1.0e7",
+       "4.0e7",
+       "50%",
+       "1,000",
+       "2.6e8"
+      ]
+     },
+     "numeric_columns": [
+      "CD34"
+     ],
+     "date_columns": [
+      "Date Processed"
+     ],
+     "pick_date": "Date Processed",
+     "pick_label": "QC Lot",
+     "to_numeric": {
+      "QC Lot": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "Date Processed": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "CD34": [
+       70000000.0,
+       50000000.0,
+       90000000.0,
+       null,
+       null,
+       10000000.0,
+       40000000.0,
+       0.5,
+       1000.0,
+       260000000.0
+      ]
+     },
+     "to_datetime": {
+      "Date Processed": [
+       {
+        "d": "2024-04-18T00:00:00"
+       },
+       {
+        "d": "2024-03-12T00:00:00"
+       },
+       {
+        "d": "2024-04-01T00:00:00"
+       },
+       {
+        "d": "2024-04-28T00:00:00"
+       },
+       {
+        "d": "2024-05-08T00:00:00"
+       },
+       {
+        "d": "2024-05-18T00:00:00"
+       },
+       null,
+       {
+        "d": "2024-05-20T00:00:00"
+       },
+       {
+        "d": "2024-05-21T00:00:00"
+       },
+       {
+        "d": "2024-05-22T00:00:00"
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "file": "tabbed.tsv",
+   "sheets": [
+    "tabbed"
+   ],
+   "tables": {
+    "tabbed": {
+     "columns": [
+      "Lot",
+      "Run Date",
+      "Value",
+      "Notes"
+     ],
+     "index": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "cells": {
+      "Lot": [
+       "A",
+       "B",
+       "C",
+       "D",
+       "E"
+      ],
+      "Run Date": [
+       "01/05/2024",
+       "01/06/2024",
+       "01/09/2024",
+       null,
+       "01/12/2024"
+      ],
+      "Value": [
+       10.5,
+       11.0,
+       9.75,
+       12.0,
+       13.25
+      ],
+      "Notes": [
+       "x",
+       null,
+       "retest",
+       "y",
+       "z"
+      ]
+     },
+     "numeric_columns": [
+      "Value"
+     ],
+     "date_columns": [
+      "Run Date"
+     ],
+     "pick_date": "Run Date",
+     "pick_label": null,
+     "to_numeric": {
+      "Lot": [
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "Run Date": [
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "Value": [
+       10.5,
+       11.0,
+       9.75,
+       12.0,
+       13.25
+      ],
+      "Notes": [
+       null,
+       null,
+       null,
+       null,
+       null
+      ]
+     },
+     "to_datetime": {
+      "Lot": [
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "Run Date": [
+       {
+        "d": "2024-01-05T00:00:00"
+       },
+       {
+        "d": "2024-01-06T00:00:00"
+       },
+       {
+        "d": "2024-01-09T00:00:00"
+       },
+       null,
+       {
+        "d": "2024-01-12T00:00:00"
+       }
+      ],
+      "Value": [
+       {
+        "d": "1900-01-09T12:00:00"
+       },
+       {
+        "d": "1900-01-10T00:00:00"
+       },
+       {
+        "d": "1900-01-08T18:00:00"
+       },
+       {
+        "d": "1900-01-11T00:00:00"
+       },
+       {
+        "d": "1900-01-12T06:00:00"
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "file": "semicolon.csv",
+   "sheets": [
+    "semicolon"
+   ],
+   "tables": {
+    "semicolon": {
+     "columns": [
+      "Lot",
+      "Date",
+      "Value"
+     ],
+     "index": [
+      2,
+      3,
+      4
+     ],
+     "cells": {
+      "Lot": [
+       "A",
+       "B",
+       "C"
+      ],
+      "Date": [
+       "2024-02-01",
+       "2024-02-03",
+       "2024-02-02"
+      ],
+      "Value": [
+       1.5,
+       2.5,
+       2.0
+      ]
+     },
+     "numeric_columns": [
+      "Value"
+     ],
+     "date_columns": [
+      "Date"
+     ],
+     "pick_date": "Date",
+     "pick_label": null,
+     "to_numeric": {
+      "Lot": [
+       null,
+       null,
+       null
+      ],
+      "Date": [
+       null,
+       null,
+       null
+      ],
+      "Value": [
+       1.5,
+       2.5,
+       2.0
+      ]
+     },
+     "to_datetime": {
+      "Lot": [
+       null,
+       null,
+       null
+      ],
+      "Date": [
+       {
+        "d": "2024-02-01T00:00:00"
+       },
+       {
+        "d": "2024-02-03T00:00:00"
+       },
+       {
+        "d": "2024-02-02T00:00:00"
+       }
+      ],
+      "Value": [
+       {
+        "d": "1899-12-31T12:00:00"
+       },
+       {
+        "d": "1900-01-01T12:00:00"
+       },
+       {
+        "d": "1900-01-01T00:00:00"
+       }
+      ]
+     }
+    }
+   }
+  },
+  {
+   "file": "edge.csv",
+   "sheets": [
+    "edge"
+   ],
+   "tables": {
+    "edge": {
+     "columns": [
+      "A",
+      "A.1",
+      "Unnamed: 2",
+      "B"
+     ],
+     "index": [
+      2,
+      3,
+      5
+     ],
+     "cells": {
+      "A": [
+       1.0,
+       5.0,
+       9.0
+      ],
+      "A.1": [
+       2.0,
+       6.0,
+       10.0
+      ],
+      "Unnamed: 2": [
+       3.0,
+       7.0,
+       11.0
+      ],
+      "B": [
+       "4",
+       "8",
+       "x"
+      ]
+     },
+     "numeric_columns": [
+      "A",
+      "A.1",
+      "Unnamed: 2"
+     ],
+     "date_columns": [],
+     "pick_date": null,
+     "pick_label": null,
+     "to_numeric": {
+      "A": [
+       1.0,
+       5.0,
+       9.0
+      ],
+      "A.1": [
+       2.0,
+       6.0,
+       10.0
+      ],
+      "Unnamed: 2": [
+       3.0,
+       7.0,
+       11.0
+      ],
+      "B": [
+       4.0,
+       8.0,
+       null
+      ]
+     },
+     "to_datetime": {}
+    }
+   }
+  },
+  {
+   "file": "dates.xlsx",
+   "sheets": [
+    "Runs",
+    "Text only",
+    "Empty"
+   ],
+   "tables": {
+    "Runs": {
+     "columns": [
+      "Lot",
+      "Run Date",
+      "Value",
+      "Flag"
+     ],
+     "index": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+     ],
+     "cells": {
+      "Lot": [
+       "D1",
+       "D2",
+       "D3",
+       "D4",
+       "D5",
+       "D6",
+       "D7",
+       "D8",
+       "D9",
+       "D10",
+       "D11",
+       "D12"
+      ],
+      "Run Date": [
+       {
+        "d": "2024-01-05T00:00:00"
+       },
+       45300,
+       "2024-01-07",
+       "1/8/2024",
+       "Jan 9, 2024",
+       "2024-01-10 13:00",
+       "pending",
+       null,
+       "  ",
+       "2024-01-14T08:30:00",
+       "01/15/24",
+       45306.5
+      ],
+      "Value": [
+       1,
+       2.5,
+       "3",
+       " 4 ",
+       "50%",
+       "1,000",
+       "abc",
+       8,
+       null,
+       null,
+       "9e1",
+       -2
+      ],
+      "Flag": [
+       true,
+       false,
+       true,
+       true,
+       false,
+       true,
+       false,
+       true,
+       false,
+       true,
+       false,
+       true
+      ]
+     },
+     "numeric_columns": [
+      "Value",
+      "Flag"
+     ],
+     "date_columns": [
+      "Run Date"
+     ],
+     "pick_date": "Run Date",
+     "pick_label": null,
+     "to_numeric": {
+      "Lot": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "Run Date": [
+       null,
+       45300.0,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       45306.5
+      ],
+      "Value": [
+       1.0,
+       2.5,
+       3.0,
+       4.0,
+       0.5,
+       1000.0,
+       null,
+       8.0,
+       null,
+       null,
+       90.0,
+       -2.0
+      ],
+      "Flag": [
+       1.0,
+       0.0,
+       1.0,
+       1.0,
+       0.0,
+       1.0,
+       0.0,
+       1.0,
+       0.0,
+       1.0,
+       0.0,
+       1.0
+      ]
+     },
+     "to_datetime": {
+      "Lot": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "Run Date": [
+       {
+        "d": "2024-01-05T00:00:00"
+       },
+       {
+        "d": "2024-01-09T00:00:00"
+       },
+       {
+        "d": "2024-01-07T00:00:00"
+       },
+       {
+        "d": "2024-01-08T00:00:00"
+       },
+       {
+        "d": "2024-01-09T00:00:00"
+       },
+       {
+        "d": "2024-01-10T13:00:00"
+       },
+       null,
+       null,
+       null,
+       {
+        "d": "2024-01-14T08:30:00"
+       },
+       {
+        "d": "2024-01-15T00:00:00"
+       },
+       {
+        "d": "2024-01-15T12:00:00"
+       }
+      ],
+      "Value": {
+       "crash": "OutOfBoundsDatetime"
+      }
+     }
+    },
+    "Text only": {
+     "columns": [
+      "Only"
+     ],
+     "index": [
+      2,
+      4
+     ],
+     "cells": {
+      "Only": [
+       "x",
+       "y"
+      ]
+     },
+     "numeric_columns": [],
+     "date_columns": [],
+     "pick_date": null,
+     "pick_label": null,
+     "to_numeric": {
+      "Only": [
+       null,
+       null
+      ]
+     },
+     "to_datetime": {}
+    },
+    "Empty": {
+     "columns": [],
+     "index": [],
+     "cells": {},
+     "numeric_columns": [],
+     "date_columns": [],
+     "pick_date": null,
+     "pick_label": null,
+     "to_numeric": {},
+     "to_datetime": {}
+    }
+   },
+   "default": [
+    "Lot",
+    "Run Date",
+    "Value",
+    "Flag"
+   ]
+  },
+  {
+   "file": "qc_summary.xlsx",
+   "sheets": [
+    "Summary",
+    "Archive"
+   ],
+   "tables": {
+    "Summary": {
+     "columns": [
+      "QC Lot",
+      "ISBT DIN",
+      "Date Processed",
+      "Quarter",
+      "QC3 CD34/Unit",
+      "QC3 CD34 Viability",
+      "QC2 CFU (GM&GEMM)",
+      "Notes"
+     ],
+     "index": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60
+     ],
+     "cells": {
+      "QC Lot": [
+       "QC-1000",
+       "QC-1001",
+       "QC-1002",
+       "QC-1003",
+       "QC-1004",
+       "QC-1005",
+       "QC-1006",
+       "QC-1007",
+       "QC-1008",
+       "QC-1009",
+       "QC-1010",
+       "QC-1011",
+       "QC-1012",
+       "QC-1013",
+       "QC-1014",
+       "QC-1015",
+       "QC-1016",
+       "QC-1017",
+       "QC-1018",
+       "QC-1019",
+       "QC-1020",
+       "QC-1021",
+       "QC-1022",
+       "QC-1023",
+       "QC-1024",
+       "QC-1025",
+       "QC-1026",
+       "QC-1027",
+       "QC-1028",
+       "QC-1029",
+       "QC-1030",
+       "QC-1031",
+       "QC-1032",
+       "QC-1033",
+       "QC-1034",
+       "QC-1035",
+       "QC-1036",
+       "QC-1037",
+       "QC-1038",
+       "QC-1039",
+       "QC-1040",
+       "QC-1041",
+       "QC-1042",
+       "QC-1043",
+       "QC-1044",
+       "QC-1045",
+       "QC-1046",
+       "QC-1047",
+       "QC-1048",
+       "QC-1049",
+       "QC-1050",
+       "QC-1051",
+       "QC-1052",
+       "QC-1053",
+       "QC-1054",
+       "QC-1055",
+       "QC-1056",
+       "QC-1057",
+       "QC-1058",
+       "QC-1059"
+      ],
+      "ISBT DIN": [
+       "W437524000700",
+       "W437524000703",
+       "W437524000706",
+       "W437524000709",
+       "W437524000712",
+       "W437524000715",
+       "W437524000718",
+       "W437524000721",
+       "W437524000724",
+       "W437524000727",
+       "W437524000730",
+       "W437524000733",
+       "W437524000736",
+       "W437524000739",
+       "W437524000742",
+       "W437524000745",
+       "W437524000748",
+       "W437524000751",
+       "W437524000754",
+       "W437524000757",
+       "W437524000760",
+       "W437524000763",
+       "W437524000766",
+       "W437524000769",
+       "W437524000772",
+       "W437524000775",
+       "W437524000778",
+       "W437524000781",
+       "W437524000784",
+       "W437524000787",
+       "W437524000790",
+       "W437524000793",
+       "W437524000796",
+       "W437524000799",
+       "W437524000802",
+       "W437524000805",
+       "W437524000808",
+       "W437524000811",
+       "W437524000814",
+       "W437524000817",
+       "W437524000820",
+       "W437524000823",
+       "W437524000826",
+       "W437524000829",
+       "W437524000832",
+       "W437524000835",
+       "W437524000838",
+       "W437524000841",
+       "W437524000844",
+       "W437524000847",
+       "W437524000850",
+       "W437524000853",
+       "W437524000856",
+       "W437524000859",
+       "W437524000862",
+       "W437524000865",
+       "W437524000868",
+       "W437524000871",
+       "W437524000874",
+       "W437524000877"
+      ],
+      "Date Processed": [
+       {
+        "d": "2025-06-02T00:00:00"
+       },
+       {
+        "d": "2025-06-08T00:00:00"
+       },
+       {
+        "d": "2025-06-09T00:00:00"
+       },
+       {
+        "d": "2025-06-11T00:00:00"
+       },
+       null,
+       {
+        "d": "2025-06-23T00:00:00"
+       },
+       {
+        "d": "2025-06-25T00:00:00"
+       },
+       {
+        "d": "2025-06-27T00:00:00"
+       },
+       {
+        "d": "2025-06-30T00:00:00"
+       },
+       {
+        "d": "2025-07-10T00:00:00"
+       },
+       {
+        "d": "2025-07-12T00:00:00"
+       },
+       {
+        "d": "2025-07-17T00:00:00"
+       },
+       {
+        "d": "2025-07-22T00:00:00"
+       },
+       {
+        "d": "2025-07-23T00:00:00"
+       },
+       {
+        "d": "2025-07-26T00:00:00"
+       },
+       {
+        "d": "2025-07-26T00:00:00"
+       },
+       {
+        "d": "2025-08-02T00:00:00"
+       },
+       {
+        "d": "2025-08-02T00:00:00"
+       },
+       {
+        "d": "2025-08-20T00:00:00"
+       },
+       {
+        "d": "2025-08-21T00:00:00"
+       },
+       {
+        "d": "2025-08-21T00:00:00"
+       },
+       {
+        "d": "2025-08-24T00:00:00"
+       },
+       {
+        "d": "2025-08-24T00:00:00"
+       },
+       {
+        "d": "2025-08-25T00:00:00"
+       },
+       {
+        "d": "2025-08-27T00:00:00"
+       },
+       {
+        "d": "2025-08-30T00:00:00"
+       },
+       {
+        "d": "2025-08-31T00:00:00"
+       },
+       {
+        "d": "2025-09-01T00:00:00"
+       },
+       {
+        "d": "2025-09-02T00:00:00"
+       },
+       {
+        "d": "2025-09-02T00:00:00"
+       },
+       {
+        "d": "2025-09-09T00:00:00"
+       },
+       {
+        "d": "2025-09-14T00:00:00"
+       },
+       {
+        "d": "2025-09-14T00:00:00"
+       },
+       {
+        "d": "2025-09-20T00:00:00"
+       },
+       {
+        "d": "2025-09-21T00:00:00"
+       },
+       {
+        "d": "2025-09-22T00:00:00"
+       },
+       {
+        "d": "2025-09-23T00:00:00"
+       },
+       {
+        "d": "2025-10-03T00:00:00"
+       },
+       {
+        "d": "2025-10-06T00:00:00"
+       },
+       {
+        "d": "2025-10-09T00:00:00"
+       },
+       {
+        "d": "2025-10-19T00:00:00"
+       },
+       {
+        "d": "2025-10-22T00:00:00"
+       },
+       {
+        "d": "2025-10-23T00:00:00"
+       },
+       {
+        "d": "2025-10-25T00:00:00"
+       },
+       {
+        "d": "2025-10-25T00:00:00"
+       },
+       {
+        "d": "2025-10-26T00:00:00"
+       },
+       {
+        "d": "2025-10-27T00:00:00"
+       },
+       {
+        "d": "2025-10-28T00:00:00"
+       },
+       {
+        "d": "2025-10-30T00:00:00"
+       },
+       {
+        "d": "2025-11-01T00:00:00"
+       },
+       {
+        "d": "2025-11-03T00:00:00"
+       },
+       {
+        "d": "2025-11-06T00:00:00"
+       },
+       {
+        "d": "2025-11-10T00:00:00"
+       },
+       {
+        "d": "2025-11-13T00:00:00"
+       },
+       {
+        "d": "2025-11-14T00:00:00"
+       },
+       {
+        "d": "2025-11-19T00:00:00"
+       },
+       {
+        "d": "2025-11-23T00:00:00"
+       },
+       {
+        "d": "2025-11-27T00:00:00"
+       },
+       {
+        "d": "2025-11-27T00:00:00"
+       },
+       {
+        "d": "2025-11-28T00:00:00"
+       }
+      ],
+      "Quarter": [
+       "Q2",
+       "Q2",
+       "Q2",
+       "Q2",
+       "Q2",
+       "Q2",
+       "Q2",
+       "Q2",
+       "Q2",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q3",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4",
+       "Q4"
+      ],
+      "QC3 CD34/Unit": [
+       32458000,
+       51400000,
+       42387000,
+       45441000,
+       79096000,
+       45464000,
+       59415000,
+       "pending",
+       49495000,
+       null,
+       61988000,
+       "5.5E7",
+       37949000,
+       61371000,
+       84459000,
+       32151000,
+       75469000,
+       62148000,
+       48454000,
+       96007000,
+       73721000,
+       38413000,
+       61341000,
+       70380000,
+       56602000,
+       72292000,
+       58803000,
+       72010000,
+       85893000,
+       47838000,
+       63656000,
+       51660000,
+       62291000,
+       38630000,
+       49573000,
+       56468000,
+       76178000,
+       80614000,
+       36176000,
+       45696000,
+       71644000,
+       24136000,
+       51663000,
+       58249000,
+       82626000,
+       72409000,
+       54110000,
+       53366000,
+       55496000,
+       87424000,
+       52296000,
+       54534000,
+       66347000,
+       57826000,
+       56449000,
+       39947000,
+       59793000,
+       52016000,
+       240000000,
+       71756000
+      ],
+      "QC3 CD34 Viability": [
+       0.8995,
+       0.9131,
+       0.8748,
+       0.9477,
+       0.8243,
+       0.8833,
+       0.8252,
+       0.8409,
+       0.9844,
+       0.9318,
+       0.8928,
+       0.909,
+       0.9684,
+       0.8785,
+       0.9203,
+       0.9362,
+       0.8804,
+       0.9082,
+       0.9501,
+       0.9746,
+       0.8457,
+       0.9787,
+       0.8209,
+       0.948,
+       0.9578,
+       0.8432,
+       0.8912,
+       0.9586,
+       0.8224,
+       0.9268,
+       0.9548,
+       0.9072,
+       0.9434,
+       0.8585,
+       0.8537,
+       0.8817,
+       0.8505,
+       0.8788,
+       0.9812,
+       0.9175,
+       0.8778,
+       0.8662,
+       0.9818,
+       0.8956,
+       0.9867,
+       0.9076,
+       0.9086,
+       0.9724,
+       0.9463,
+       0.9187,
+       0.8925,
+       0.9693,
+       0.89,
+       0.9769,
+       0.8317,
+       0.8931,
+       0.9083,
+       0.9817,
+       0.8627,
+       0.957
+      ],
+      "QC2 CFU (GM&GEMM)": [
+       76,
+       71,
+       81,
+       82,
+       56,
+       77,
+       84,
+       40,
+       23,
+       31,
+       22,
+       50,
+       21,
+       38,
+       37,
+       69,
+       37,
+       86,
+       33,
+       88,
+       59,
+       37,
+       22,
+       41,
+       61,
+       27,
+       31,
+       28,
+       67,
+       26,
+       21,
+       51,
+       41,
+       59,
+       85,
+       80,
+       57,
+       65,
+       76,
+       50,
+       66,
+       35,
+       62,
+       36,
+       33,
+       73,
+       60,
+       46,
+       22,
+       36,
+       76,
+       52,
+       87,
+       83,
+       79,
+       21,
+       23,
+       60,
+       43,
+       78
+      ],
+      "Notes": [
+       null,
+       "QC hold",
+       "QC hold",
+       "ok",
+       "QC hold",
+       null,
+       "retest pending",
+       null,
+       null,
+       "ok",
+       "ok",
+       "retest pending",
+       "Retest",
+       "QC hold",
+       "ok",
+       "ok",
+       null,
+       "Retest",
+       "ok",
+       "ok",
+       null,
+       "QC hold",
+       null,
+       "retest pending",
+       null,
+       "QC hold",
+       "retest pending",
+       null,
+       "Retest",
+       "ok",
+       "retest pending",
+       "Retest",
+       "retest pending",
+       "Retest",
+       "ok",
+       null,
+       null,
+       "QC hold",
+       "Retest",
+       "ok",
+       "retest pending",
+       "Retest",
+       "retest pending",
+       null,
+       "ok",
+       "QC hold",
+       null,
+       "QC hold",
+       "Retest",
+       null,
+       "QC hold",
+       "QC hold",
+       "QC hold",
+       null,
+       "QC hold",
+       null,
+       null,
+       null,
+       null,
+       "QC hold"
+      ]
+     },
+     "numeric_columns": [
+      "QC3 CD34/Unit",
+      "QC3 CD34 Viability",
+      "QC2 CFU (GM&GEMM)"
+     ],
+     "date_columns": [
+      "Date Processed"
+     ],
+     "pick_date": "Date Processed",
+     "pick_label": "QC Lot",
+     "to_numeric": {
+      "QC Lot": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "ISBT DIN": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "Date Processed": [
+       1748822400000000.0,
+       1749340800000000.0,
+       1749427200000000.0,
+       1749600000000000.0,
+       -9.223372036854776e+18,
+       1750636800000000.0,
+       1750809600000000.0,
+       1750982400000000.0,
+       1751241600000000.0,
+       1752105600000000.0,
+       1752278400000000.0,
+       1752710400000000.0,
+       1753142400000000.0,
+       1753228800000000.0,
+       1753488000000000.0,
+       1753488000000000.0,
+       1754092800000000.0,
+       1754092800000000.0,
+       1755648000000000.0,
+       1755734400000000.0,
+       1755734400000000.0,
+       1755993600000000.0,
+       1755993600000000.0,
+       1756080000000000.0,
+       1756252800000000.0,
+       1756512000000000.0,
+       1756598400000000.0,
+       1756684800000000.0,
+       1756771200000000.0,
+       1756771200000000.0,
+       1757376000000000.0,
+       1757808000000000.0,
+       1757808000000000.0,
+       1758326400000000.0,
+       1758412800000000.0,
+       1758499200000000.0,
+       1758585600000000.0,
+       1759449600000000.0,
+       1759708800000000.0,
+       1759968000000000.0,
+       1760832000000000.0,
+       1761091200000000.0,
+       1761177600000000.0,
+       1761350400000000.0,
+       1761350400000000.0,
+       1761436800000000.0,
+       1761523200000000.0,
+       1761609600000000.0,
+       1761782400000000.0,
+       1761955200000000.0,
+       1762128000000000.0,
+       1762387200000000.0,
+       1762732800000000.0,
+       1762992000000000.0,
+       1763078400000000.0,
+       1763510400000000.0,
+       1763856000000000.0,
+       1764201600000000.0,
+       1764201600000000.0,
+       1764288000000000.0
+      ],
+      "Quarter": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "QC3 CD34/Unit": [
+       32458000.0,
+       51400000.0,
+       42387000.0,
+       45441000.0,
+       79096000.0,
+       45464000.0,
+       59415000.0,
+       null,
+       49495000.0,
+       null,
+       61988000.0,
+       55000000.0,
+       37949000.0,
+       61371000.0,
+       84459000.0,
+       32151000.0,
+       75469000.0,
+       62148000.0,
+       48454000.0,
+       96007000.0,
+       73721000.0,
+       38413000.0,
+       61341000.0,
+       70380000.0,
+       56602000.0,
+       72292000.0,
+       58803000.0,
+       72010000.0,
+       85893000.0,
+       47838000.0,
+       63656000.0,
+       51660000.0,
+       62291000.0,
+       38630000.0,
+       49573000.0,
+       56468000.0,
+       76178000.0,
+       80614000.0,
+       36176000.0,
+       45696000.0,
+       71644000.0,
+       24136000.0,
+       51663000.0,
+       58249000.0,
+       82626000.0,
+       72409000.0,
+       54110000.0,
+       53366000.0,
+       55496000.0,
+       87424000.0,
+       52296000.0,
+       54534000.0,
+       66347000.0,
+       57826000.0,
+       56449000.0,
+       39947000.0,
+       59793000.0,
+       52016000.0,
+       240000000.0,
+       71756000.0
+      ],
+      "QC3 CD34 Viability": [
+       0.8995,
+       0.9131,
+       0.8748,
+       0.9477,
+       0.8243,
+       0.8833,
+       0.8252,
+       0.8409,
+       0.9844,
+       0.9318,
+       0.8928,
+       0.909,
+       0.9684,
+       0.8785,
+       0.9203,
+       0.9362,
+       0.8804,
+       0.9082,
+       0.9501,
+       0.9746,
+       0.8457,
+       0.9787,
+       0.8209,
+       0.948,
+       0.9578,
+       0.8432,
+       0.8912,
+       0.9586,
+       0.8224,
+       0.9268,
+       0.9548,
+       0.9072,
+       0.9434,
+       0.8585,
+       0.8537,
+       0.8817,
+       0.8505,
+       0.8788,
+       0.9812,
+       0.9175,
+       0.8778,
+       0.8662,
+       0.9818,
+       0.8956,
+       0.9867,
+       0.9076,
+       0.9086,
+       0.9724,
+       0.9463,
+       0.9187,
+       0.8925,
+       0.9693,
+       0.89,
+       0.9769,
+       0.8317,
+       0.8931,
+       0.9083,
+       0.9817,
+       0.8627,
+       0.957
+      ],
+      "QC2 CFU (GM&GEMM)": [
+       76.0,
+       71.0,
+       81.0,
+       82.0,
+       56.0,
+       77.0,
+       84.0,
+       40.0,
+       23.0,
+       31.0,
+       22.0,
+       50.0,
+       21.0,
+       38.0,
+       37.0,
+       69.0,
+       37.0,
+       86.0,
+       33.0,
+       88.0,
+       59.0,
+       37.0,
+       22.0,
+       41.0,
+       61.0,
+       27.0,
+       31.0,
+       28.0,
+       67.0,
+       26.0,
+       21.0,
+       51.0,
+       41.0,
+       59.0,
+       85.0,
+       80.0,
+       57.0,
+       65.0,
+       76.0,
+       50.0,
+       66.0,
+       35.0,
+       62.0,
+       36.0,
+       33.0,
+       73.0,
+       60.0,
+       46.0,
+       22.0,
+       36.0,
+       76.0,
+       52.0,
+       87.0,
+       83.0,
+       79.0,
+       21.0,
+       23.0,
+       60.0,
+       43.0,
+       78.0
+      ],
+      "Notes": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ]
+     },
+     "to_datetime": {
+      "Date Processed": [
+       {
+        "d": "2025-06-02T00:00:00"
+       },
+       {
+        "d": "2025-06-08T00:00:00"
+       },
+       {
+        "d": "2025-06-09T00:00:00"
+       },
+       {
+        "d": "2025-06-11T00:00:00"
+       },
+       null,
+       {
+        "d": "2025-06-23T00:00:00"
+       },
+       {
+        "d": "2025-06-25T00:00:00"
+       },
+       {
+        "d": "2025-06-27T00:00:00"
+       },
+       {
+        "d": "2025-06-30T00:00:00"
+       },
+       {
+        "d": "2025-07-10T00:00:00"
+       },
+       {
+        "d": "2025-07-12T00:00:00"
+       },
+       {
+        "d": "2025-07-17T00:00:00"
+       },
+       {
+        "d": "2025-07-22T00:00:00"
+       },
+       {
+        "d": "2025-07-23T00:00:00"
+       },
+       {
+        "d": "2025-07-26T00:00:00"
+       },
+       {
+        "d": "2025-07-26T00:00:00"
+       },
+       {
+        "d": "2025-08-02T00:00:00"
+       },
+       {
+        "d": "2025-08-02T00:00:00"
+       },
+       {
+        "d": "2025-08-20T00:00:00"
+       },
+       {
+        "d": "2025-08-21T00:00:00"
+       },
+       {
+        "d": "2025-08-21T00:00:00"
+       },
+       {
+        "d": "2025-08-24T00:00:00"
+       },
+       {
+        "d": "2025-08-24T00:00:00"
+       },
+       {
+        "d": "2025-08-25T00:00:00"
+       },
+       {
+        "d": "2025-08-27T00:00:00"
+       },
+       {
+        "d": "2025-08-30T00:00:00"
+       },
+       {
+        "d": "2025-08-31T00:00:00"
+       },
+       {
+        "d": "2025-09-01T00:00:00"
+       },
+       {
+        "d": "2025-09-02T00:00:00"
+       },
+       {
+        "d": "2025-09-02T00:00:00"
+       },
+       {
+        "d": "2025-09-09T00:00:00"
+       },
+       {
+        "d": "2025-09-14T00:00:00"
+       },
+       {
+        "d": "2025-09-14T00:00:00"
+       },
+       {
+        "d": "2025-09-20T00:00:00"
+       },
+       {
+        "d": "2025-09-21T00:00:00"
+       },
+       {
+        "d": "2025-09-22T00:00:00"
+       },
+       {
+        "d": "2025-09-23T00:00:00"
+       },
+       {
+        "d": "2025-10-03T00:00:00"
+       },
+       {
+        "d": "2025-10-06T00:00:00"
+       },
+       {
+        "d": "2025-10-09T00:00:00"
+       },
+       {
+        "d": "2025-10-19T00:00:00"
+       },
+       {
+        "d": "2025-10-22T00:00:00"
+       },
+       {
+        "d": "2025-10-23T00:00:00"
+       },
+       {
+        "d": "2025-10-25T00:00:00"
+       },
+       {
+        "d": "2025-10-25T00:00:00"
+       },
+       {
+        "d": "2025-10-26T00:00:00"
+       },
+       {
+        "d": "2025-10-27T00:00:00"
+       },
+       {
+        "d": "2025-10-28T00:00:00"
+       },
+       {
+        "d": "2025-10-30T00:00:00"
+       },
+       {
+        "d": "2025-11-01T00:00:00"
+       },
+       {
+        "d": "2025-11-03T00:00:00"
+       },
+       {
+        "d": "2025-11-06T00:00:00"
+       },
+       {
+        "d": "2025-11-10T00:00:00"
+       },
+       {
+        "d": "2025-11-13T00:00:00"
+       },
+       {
+        "d": "2025-11-14T00:00:00"
+       },
+       {
+        "d": "2025-11-19T00:00:00"
+       },
+       {
+        "d": "2025-11-23T00:00:00"
+       },
+       {
+        "d": "2025-11-27T00:00:00"
+       },
+       {
+        "d": "2025-11-27T00:00:00"
+       },
+       {
+        "d": "2025-11-28T00:00:00"
+       }
+      ]
+     }
+    },
+    "Archive": {
+     "columns": [
+      "Lot Number",
+      "ISBT DIN",
+      "Processing Date",
+      "Quarter",
+      "CD34 per unit",
+      "QC3 CD34 Viability",
+      "QC2 CFU (GM&GEMM)",
+      "Notes"
+     ],
+     "index": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26
+     ],
+     "cells": {
+      "Lot Number": [
+       "AR-1000",
+       "AR-1001",
+       "AR-1002",
+       "AR-1003",
+       "AR-1004",
+       "AR-1005",
+       "AR-1006",
+       "AR-1007",
+       "AR-1008",
+       "AR-1009",
+       "AR-1010",
+       "AR-1011",
+       "AR-1012",
+       "AR-1013",
+       "AR-1014",
+       "AR-1015",
+       "AR-1016",
+       "AR-1017",
+       "AR-1018",
+       "AR-1019",
+       "AR-1020",
+       "AR-1021",
+       "AR-1022",
+       "AR-1023",
+       "AR-1024"
+      ],
+      "ISBT DIN": [
+       "W437524000700",
+       "W437524000703",
+       "W437524000706",
+       "W437524000709",
+       "W437524000712",
+       "W437524000715",
+       "W437524000718",
+       "W437524000721",
+       "W437524000724",
+       "W437524000727",
+       "W437524000730",
+       "W437524000733",
+       "W437524000736",
+       "W437524000739",
+       "W437524000742",
+       "W437524000745",
+       "W437524000748",
+       "W437524000751",
+       "W437524000754",
+       "W437524000757",
+       "W437524000760",
+       "W437524000763",
+       "W437524000766",
+       "W437524000769",
+       "W437524000772"
+      ],
+      "Processing Date": [
+       {
+        "d": "2025-01-08T00:00:00"
+       },
+       {
+        "d": "2025-01-11T00:00:00"
+       },
+       {
+        "d": "2025-01-15T00:00:00"
+       },
+       {
+        "d": "2025-01-15T00:00:00"
+       },
+       null,
+       {
+        "d": "2025-01-16T00:00:00"
+       },
+       {
+        "d": "2025-01-17T00:00:00"
+       },
+       {
+        "d": "2025-02-02T00:00:00"
+       },
+       {
+        "d": "2025-02-05T00:00:00"
+       },
+       {
+        "d": "2025-02-08T00:00:00"
+       },
+       {
+        "d": "2025-02-11T00:00:00"
+       },
+       {
+        "d": "2025-02-12T00:00:00"
+       },
+       {
+        "d": "2025-02-13T00:00:00"
+       },
+       {
+        "d": "2025-02-15T00:00:00"
+       },
+       {
+        "d": "2025-02-16T00:00:00"
+       },
+       {
+        "d": "2025-02-19T00:00:00"
+       },
+       {
+        "d": "2025-02-20T00:00:00"
+       },
+       {
+        "d": "2025-02-21T00:00:00"
+       },
+       {
+        "d": "2025-02-28T00:00:00"
+       },
+       {
+        "d": "2025-03-03T00:00:00"
+       },
+       {
+        "d": "2025-03-06T00:00:00"
+       },
+       {
+        "d": "2025-03-12T00:00:00"
+       },
+       {
+        "d": "2025-03-16T00:00:00"
+       },
+       {
+        "d": "2025-03-18T00:00:00"
+       },
+       {
+        "d": "2025-03-20T00:00:00"
+       }
+      ],
+      "Quarter": [
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1"
+      ],
+      "CD34 per unit": [
+       57542000,
+       53176000,
+       68336000,
+       74841000,
+       56354000,
+       57250000,
+       72343000,
+       "pending",
+       32741000,
+       null,
+       47930000,
+       "5.5E7",
+       45347000,
+       51583000,
+       38522000,
+       33136000,
+       240000000,
+       76150000,
+       55804000,
+       46615000,
+       66930000,
+       72910000,
+       54600000,
+       69804000,
+       78772000
+      ],
+      "QC3 CD34 Viability": [
+       0.9732,
+       0.8569,
+       0.8256,
+       0.8541,
+       0.8788,
+       0.8997,
+       0.974,
+       0.9386,
+       0.8777,
+       0.8229,
+       0.8472,
+       0.9894,
+       0.8982,
+       0.9375,
+       0.8293,
+       0.8258,
+       0.9638,
+       0.9199,
+       0.8725,
+       0.874,
+       0.8352,
+       0.8494,
+       0.8242,
+       0.9627,
+       0.8993
+      ],
+      "QC2 CFU (GM&GEMM)": [
+       70,
+       65,
+       54,
+       40,
+       79,
+       86,
+       35,
+       37,
+       42,
+       53,
+       38,
+       48,
+       88,
+       45,
+       85,
+       55,
+       43,
+       85,
+       50,
+       74,
+       42,
+       89,
+       72,
+       81,
+       22
+      ],
+      "Notes": [
+       "Retest",
+       null,
+       "retest pending",
+       "QC hold",
+       null,
+       "ok",
+       null,
+       null,
+       null,
+       "retest pending",
+       null,
+       null,
+       "QC hold",
+       null,
+       "Retest",
+       "QC hold",
+       "retest pending",
+       "ok",
+       "QC hold",
+       null,
+       "QC hold",
+       null,
+       "Retest",
+       "ok",
+       null
+      ]
+     },
+     "numeric_columns": [
+      "CD34 per unit",
+      "QC3 CD34 Viability",
+      "QC2 CFU (GM&GEMM)"
+     ],
+     "date_columns": [
+      "Processing Date"
+     ],
+     "pick_date": "Processing Date",
+     "pick_label": "Lot Number",
+     "to_numeric": {
+      "Lot Number": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "ISBT DIN": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "Processing Date": [
+       1736294400000000.0,
+       1736553600000000.0,
+       1736899200000000.0,
+       1736899200000000.0,
+       -9.223372036854776e+18,
+       1736985600000000.0,
+       1737072000000000.0,
+       1738454400000000.0,
+       1738713600000000.0,
+       1738972800000000.0,
+       1739232000000000.0,
+       1739318400000000.0,
+       1739404800000000.0,
+       1739577600000000.0,
+       1739664000000000.0,
+       1739923200000000.0,
+       1740009600000000.0,
+       1740096000000000.0,
+       1740700800000000.0,
+       1740960000000000.0,
+       1741219200000000.0,
+       1741737600000000.0,
+       1742083200000000.0,
+       1742256000000000.0,
+       1742428800000000.0
+      ],
+      "Quarter": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "CD34 per unit": [
+       57542000.0,
+       53176000.0,
+       68336000.0,
+       74841000.0,
+       56354000.0,
+       57250000.0,
+       72343000.0,
+       null,
+       32741000.0,
+       null,
+       47930000.0,
+       55000000.0,
+       45347000.0,
+       51583000.0,
+       38522000.0,
+       33136000.0,
+       240000000.0,
+       76150000.0,
+       55804000.0,
+       46615000.0,
+       66930000.0,
+       72910000.0,
+       54600000.0,
+       69804000.0,
+       78772000.0
+      ],
+      "QC3 CD34 Viability": [
+       0.9732,
+       0.8569,
+       0.8256,
+       0.8541,
+       0.8788,
+       0.8997,
+       0.974,
+       0.9386,
+       0.8777,
+       0.8229,
+       0.8472,
+       0.9894,
+       0.8982,
+       0.9375,
+       0.8293,
+       0.8258,
+       0.9638,
+       0.9199,
+       0.8725,
+       0.874,
+       0.8352,
+       0.8494,
+       0.8242,
+       0.9627,
+       0.8993
+      ],
+      "QC2 CFU (GM&GEMM)": [
+       70.0,
+       65.0,
+       54.0,
+       40.0,
+       79.0,
+       86.0,
+       35.0,
+       37.0,
+       42.0,
+       53.0,
+       38.0,
+       48.0,
+       88.0,
+       45.0,
+       85.0,
+       55.0,
+       43.0,
+       85.0,
+       50.0,
+       74.0,
+       42.0,
+       89.0,
+       72.0,
+       81.0,
+       22.0
+      ],
+      "Notes": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ]
+     },
+     "to_datetime": {
+      "Processing Date": [
+       {
+        "d": "2025-01-08T00:00:00"
+       },
+       {
+        "d": "2025-01-11T00:00:00"
+       },
+       {
+        "d": "2025-01-15T00:00:00"
+       },
+       {
+        "d": "2025-01-15T00:00:00"
+       },
+       null,
+       {
+        "d": "2025-01-16T00:00:00"
+       },
+       {
+        "d": "2025-01-17T00:00:00"
+       },
+       {
+        "d": "2025-02-02T00:00:00"
+       },
+       {
+        "d": "2025-02-05T00:00:00"
+       },
+       {
+        "d": "2025-02-08T00:00:00"
+       },
+       {
+        "d": "2025-02-11T00:00:00"
+       },
+       {
+        "d": "2025-02-12T00:00:00"
+       },
+       {
+        "d": "2025-02-13T00:00:00"
+       },
+       {
+        "d": "2025-02-15T00:00:00"
+       },
+       {
+        "d": "2025-02-16T00:00:00"
+       },
+       {
+        "d": "2025-02-19T00:00:00"
+       },
+       {
+        "d": "2025-02-20T00:00:00"
+       },
+       {
+        "d": "2025-02-21T00:00:00"
+       },
+       {
+        "d": "2025-02-28T00:00:00"
+       },
+       {
+        "d": "2025-03-03T00:00:00"
+       },
+       {
+        "d": "2025-03-06T00:00:00"
+       },
+       {
+        "d": "2025-03-12T00:00:00"
+       },
+       {
+        "d": "2025-03-16T00:00:00"
+       },
+       {
+        "d": "2025-03-18T00:00:00"
+       },
+       {
+        "d": "2025-03-20T00:00:00"
+       }
+      ]
+     }
+    }
+   },
+   "default": [
+    "QC Lot",
+    "ISBT DIN",
+    "Date Processed",
+    "Quarter",
+    "QC3 CD34/Unit",
+    "QC3 CD34 Viability",
+    "QC2 CFU (GM&GEMM)",
+    "Notes"
+   ]
+  },
+  {
+   "file": "dup_a.xlsx",
+   "sheets": [
+    "Summary"
+   ],
+   "tables": {
+    "Summary": {
+     "columns": [
+      "QC Lot",
+      "ISBT DIN",
+      "Date Processed",
+      "Quarter",
+      "QC3 CD34/Unit",
+      "QC3 CD34 Viability",
+      "QC2 CFU (GM&GEMM)",
+      "Notes"
+     ],
+     "index": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+     ],
+     "cells": {
+      "QC Lot": [
+       "DP-1000",
+       "DP-1001",
+       "DP-1002",
+       "DP-1003",
+       "DP-1004",
+       "DP-1005",
+       "DP-1006",
+       "DP-1007",
+       "DP-1008",
+       "DP-1009",
+       "DP-1010",
+       "DP-1011",
+       "DP-1012",
+       "DP-1013"
+      ],
+      "ISBT DIN": [
+       "W437524000700",
+       "W437524000703",
+       "W437524000706",
+       "W437524000709",
+       "W437524000712",
+       "W437524000715",
+       "W437524000718",
+       "W437524000721",
+       "W437524000724",
+       "W437524000727",
+       "W437524000730",
+       "W437524000733",
+       "W437524000736",
+       "W437524000739"
+      ],
+      "Date Processed": [
+       {
+        "d": "2025-03-04T00:00:00"
+       },
+       {
+        "d": "2025-03-05T00:00:00"
+       },
+       {
+        "d": "2025-03-08T00:00:00"
+       },
+       {
+        "d": "2025-03-08T00:00:00"
+       },
+       null,
+       {
+        "d": "2025-03-12T00:00:00"
+       },
+       {
+        "d": "2025-03-13T00:00:00"
+       },
+       {
+        "d": "2025-03-13T00:00:00"
+       },
+       {
+        "d": "2025-03-17T00:00:00"
+       },
+       {
+        "d": "2025-03-18T00:00:00"
+       },
+       {
+        "d": "2025-03-22T00:00:00"
+       },
+       {
+        "d": "2025-03-28T00:00:00"
+       },
+       {
+        "d": "2025-03-31T00:00:00"
+       },
+       {
+        "d": "2025-04-06T00:00:00"
+       }
+      ],
+      "Quarter": [
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q2"
+      ],
+      "QC3 CD34/Unit": [
+       64064000,
+       53653000,
+       54937000,
+       47975000,
+       41007000,
+       52966000,
+       68675000,
+       "pending",
+       77240000,
+       null,
+       240000000,
+       "5.5E7",
+       69812000,
+       50906000
+      ],
+      "QC3 CD34 Viability": [
+       0.8354,
+       0.9323,
+       0.9783,
+       0.8552,
+       0.9271,
+       0.8707,
+       0.9461,
+       0.9428,
+       0.8572,
+       0.9611,
+       0.9318,
+       0.9361,
+       0.9594,
+       0.8929
+      ],
+      "QC2 CFU (GM&GEMM)": [
+       32,
+       23,
+       72,
+       32,
+       72,
+       43,
+       59,
+       85,
+       84,
+       53,
+       34,
+       37,
+       79,
+       61
+      ],
+      "Notes": [
+       "Retest",
+       "Retest",
+       null,
+       "ok",
+       "QC hold",
+       "QC hold",
+       "ok",
+       "retest pending",
+       null,
+       null,
+       "ok",
+       "retest pending",
+       "retest pending",
+       "Retest"
+      ]
+     },
+     "numeric_columns": [
+      "QC3 CD34/Unit",
+      "QC3 CD34 Viability",
+      "QC2 CFU (GM&GEMM)"
+     ],
+     "date_columns": [
+      "Date Processed"
+     ],
+     "pick_date": "Date Processed",
+     "pick_label": "QC Lot",
+     "to_numeric": {
+      "QC Lot": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "ISBT DIN": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "Date Processed": [
+       1741046400000000.0,
+       1741132800000000.0,
+       1741392000000000.0,
+       1741392000000000.0,
+       -9.223372036854776e+18,
+       1741737600000000.0,
+       1741824000000000.0,
+       1741824000000000.0,
+       1742169600000000.0,
+       1742256000000000.0,
+       1742601600000000.0,
+       1743120000000000.0,
+       1743379200000000.0,
+       1743897600000000.0
+      ],
+      "Quarter": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "QC3 CD34/Unit": [
+       64064000.0,
+       53653000.0,
+       54937000.0,
+       47975000.0,
+       41007000.0,
+       52966000.0,
+       68675000.0,
+       null,
+       77240000.0,
+       null,
+       240000000.0,
+       55000000.0,
+       69812000.0,
+       50906000.0
+      ],
+      "QC3 CD34 Viability": [
+       0.8354,
+       0.9323,
+       0.9783,
+       0.8552,
+       0.9271,
+       0.8707,
+       0.9461,
+       0.9428,
+       0.8572,
+       0.9611,
+       0.9318,
+       0.9361,
+       0.9594,
+       0.8929
+      ],
+      "QC2 CFU (GM&GEMM)": [
+       32.0,
+       23.0,
+       72.0,
+       32.0,
+       72.0,
+       43.0,
+       59.0,
+       85.0,
+       84.0,
+       53.0,
+       34.0,
+       37.0,
+       79.0,
+       61.0
+      ],
+      "Notes": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ]
+     },
+     "to_datetime": {
+      "Date Processed": [
+       {
+        "d": "2025-03-04T00:00:00"
+       },
+       {
+        "d": "2025-03-05T00:00:00"
+       },
+       {
+        "d": "2025-03-08T00:00:00"
+       },
+       {
+        "d": "2025-03-08T00:00:00"
+       },
+       null,
+       {
+        "d": "2025-03-12T00:00:00"
+       },
+       {
+        "d": "2025-03-13T00:00:00"
+       },
+       {
+        "d": "2025-03-13T00:00:00"
+       },
+       {
+        "d": "2025-03-17T00:00:00"
+       },
+       {
+        "d": "2025-03-18T00:00:00"
+       },
+       {
+        "d": "2025-03-22T00:00:00"
+       },
+       {
+        "d": "2025-03-28T00:00:00"
+       },
+       {
+        "d": "2025-03-31T00:00:00"
+       },
+       {
+        "d": "2025-04-06T00:00:00"
+       }
+      ]
+     }
+    }
+   },
+   "default": [
+    "QC Lot",
+    "ISBT DIN",
+    "Date Processed",
+    "Quarter",
+    "QC3 CD34/Unit",
+    "QC3 CD34 Viability",
+    "QC2 CFU (GM&GEMM)",
+    "Notes"
+   ]
+  },
+  {
+   "file": "dup_b.xlsx",
+   "sheets": [
+    "Summary"
+   ],
+   "tables": {
+    "Summary": {
+     "columns": [
+      "QC Lot",
+      "ISBT DIN",
+      "Date Processed",
+      "Quarter",
+      "QC3 CD34/Unit",
+      "QC3 CD34 Viability",
+      "QC2 CFU (GM&GEMM)",
+      "Notes"
+     ],
+     "index": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+     ],
+     "cells": {
+      "QC Lot": [
+       "DP-1010",
+       "DP-1011",
+       "DP-1012",
+       "DP-1013",
+       "DP-1014",
+       "DP-1015",
+       "DP-1016",
+       "DP-1017",
+       "DP-1018",
+       "DP-1019"
+      ],
+      "ISBT DIN": [
+       "W437524000730",
+       "W437524000733",
+       "W437524000736",
+       "W437524000739",
+       "W437524000742",
+       "W437524000745",
+       "W437524000748",
+       "W437524000751",
+       "W437524000754",
+       "W437524000757"
+      ],
+      "Date Processed": [
+       {
+        "d": "2025-03-22T00:00:00"
+       },
+       {
+        "d": "2025-03-28T00:00:00"
+       },
+       {
+        "d": "2025-03-31T00:00:00"
+       },
+       {
+        "d": "2025-04-06T00:00:00"
+       },
+       {
+        "d": "2025-04-09T00:00:00"
+       },
+       {
+        "d": "2025-04-13T00:00:00"
+       },
+       {
+        "d": "2025-04-16T00:00:00"
+       },
+       {
+        "d": "2025-04-20T00:00:00"
+       },
+       {
+        "d": "2025-04-20T00:00:00"
+       },
+       {
+        "d": "2025-04-24T00:00:00"
+       }
+      ],
+      "Quarter": [
+       "Q1",
+       "Q1",
+       "Q1",
+       "Q2",
+       "Q2",
+       "Q2",
+       "Q2",
+       "Q2",
+       "Q2",
+       "Q2"
+      ],
+      "QC3 CD34/Unit": [
+       240000000,
+       "5.5E7",
+       69812000,
+       50906000,
+       56709000,
+       69729000,
+       94832000,
+       55147000,
+       55616000,
+       78042000
+      ],
+      "QC3 CD34 Viability": [
+       0.9318,
+       0.9361,
+       0.9594,
+       0.8929,
+       0.949,
+       0.9693,
+       0.8374,
+       0.9645,
+       0.887,
+       0.9015
+      ],
+      "QC2 CFU (GM&GEMM)": [
+       34,
+       37,
+       79,
+       61,
+       31,
+       82,
+       87,
+       87,
+       63,
+       88
+      ],
+      "Notes": [
+       "ok",
+       "retest pending",
+       "retest pending",
+       "Retest",
+       "Retest",
+       null,
+       "retest pending",
+       null,
+       "ok",
+       "QC hold"
+      ]
+     },
+     "numeric_columns": [
+      "QC3 CD34/Unit",
+      "QC3 CD34 Viability",
+      "QC2 CFU (GM&GEMM)"
+     ],
+     "date_columns": [
+      "Date Processed"
+     ],
+     "pick_date": "Date Processed",
+     "pick_label": "QC Lot",
+     "to_numeric": {
+      "QC Lot": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "ISBT DIN": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "Date Processed": [
+       1742601600000000.0,
+       1743120000000000.0,
+       1743379200000000.0,
+       1743897600000000.0,
+       1744156800000000.0,
+       1744502400000000.0,
+       1744761600000000.0,
+       1745107200000000.0,
+       1745107200000000.0,
+       1745452800000000.0
+      ],
+      "Quarter": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ],
+      "QC3 CD34/Unit": [
+       240000000.0,
+       55000000.0,
+       69812000.0,
+       50906000.0,
+       56709000.0,
+       69729000.0,
+       94832000.0,
+       55147000.0,
+       55616000.0,
+       78042000.0
+      ],
+      "QC3 CD34 Viability": [
+       0.9318,
+       0.9361,
+       0.9594,
+       0.8929,
+       0.949,
+       0.9693,
+       0.8374,
+       0.9645,
+       0.887,
+       0.9015
+      ],
+      "QC2 CFU (GM&GEMM)": [
+       34.0,
+       37.0,
+       79.0,
+       61.0,
+       31.0,
+       82.0,
+       87.0,
+       87.0,
+       63.0,
+       88.0
+      ],
+      "Notes": [
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null,
+       null
+      ]
+     },
+     "to_datetime": {
+      "Date Processed": [
+       {
+        "d": "2025-03-22T00:00:00"
+       },
+       {
+        "d": "2025-03-28T00:00:00"
+       },
+       {
+        "d": "2025-03-31T00:00:00"
+       },
+       {
+        "d": "2025-04-06T00:00:00"
+       },
+       {
+        "d": "2025-04-09T00:00:00"
+       },
+       {
+        "d": "2025-04-13T00:00:00"
+       },
+       {
+        "d": "2025-04-16T00:00:00"
+       },
+       {
+        "d": "2025-04-20T00:00:00"
+       },
+       {
+        "d": "2025-04-20T00:00:00"
+       },
+       {
+        "d": "2025-04-24T00:00:00"
+       }
+      ]
+     }
+    }
+   },
+   "default": [
+    "QC Lot",
+    "ISBT DIN",
+    "Date Processed",
+    "Quarter",
+    "QC3 CD34/Unit",
+    "QC3 CD34 Viability",
+    "QC2 CFU (GM&GEMM)",
+    "Notes"
+   ]
+  }
+ ],
+ "missing": {
+  "error": "File not found: {DIR}/data/missing.xlsx"
+ }
+}

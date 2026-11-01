@@ -1,0 +1,27 @@
+[package]
+name = "imr-core"
+description = "I-MR chart engine: load QC data, compute limits, apply highlight rules, export Excel and HTML"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+base64.workspace = true
+caseless.workspace = true
+calamine.workspace = true
+chrono.workspace = true
+csv.workspace = true
+regex.workspace = true
+rust_xlsxwriter.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+calamine.workspace = true
+tempfile.workspace = true
+
+[lints]
+workspace = true
