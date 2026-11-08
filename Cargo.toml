@@ -13,9 +13,9 @@ imr-core = { path = "crates/imr-core" }
 imr-charts = { path = "crates/imr-charts" }
 imr-cli = { path = "crates/imr-cli" }
 assert_cmd = "2"
-base64 = "0.22"
+base64 = "0.23"
 caseless = "0.2"
-calamine = { version = "0.37", features = ["chrono"] }
+calamine = { version = "0.38", features = ["chrono"] }
 chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
 clap = { version = "4", features = ["derive"] }
 csv = "1"
@@ -28,11 +28,11 @@ image = { version = "0.25", default-features = false, features = ["png"] }
 regex = "1"
 rfd = "0.17"
 # resvg draws the chart image; it brings usvg (SVG parsing, text) and tiny-skia.
-resvg = { version = "0.45", default-features = false, features = ["text"] }
+resvg = { version = "0.49", default-features = false, features = ["text"] }
 rust_xlsxwriter = { version = "0.102", features = ["chrono"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["preserve_order", "float_roundtrip"] }
-sha2 = "0.10"
+sha2 = "0.11"
 tempfile = "3"
 thiserror = "2"
 ttf-parser = "0.25"
